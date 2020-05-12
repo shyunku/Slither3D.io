@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Header Files\cg_libraries">
+      <UniqueIdentifier>{a722f039-f70f-47e0-9e88-1897212ad58a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\user_libraries">
+      <UniqueIdentifier>{76df329c-8417-42f1-b818-2f58ba089020}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\user_libraries\objects">
+      <UniqueIdentifier>{bcf6998d-ddc6-4f6b-94cc-dd68b1bf85b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader Files">
+      <UniqueIdentifier>{16f626f7-9bf0-4920-8255-0f2b80fae1d9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cgmath.h">
+      <Filter>Header Files\cg_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="cgut.h">
+      <Filter>Header Files\cg_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.hpp">
+      <Filter>Header Files\user_libraries\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="control.hpp">
+      <Filter>Header Files\user_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="global.hpp">
+      <Filter>Header Files\user_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="glutil.hpp">
+      <Filter>Header Files\user_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="util.hpp">
+      <Filter>Header Files\user_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="gl\glad\glad.h">
+      <Filter>Header Files\cg_libraries</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gl\glad\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\bin\shaders\shader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\bin\shaders\shader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

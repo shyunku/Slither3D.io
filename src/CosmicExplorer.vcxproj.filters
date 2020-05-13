@@ -25,6 +25,15 @@
     <Filter Include="Shader Files">
       <UniqueIdentifier>{16f626f7-9bf0-4920-8255-0f2b80fae1d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\user_libraries\objects\sphere_shape">
+      <UniqueIdentifier>{b49f7369-1448-44b9-a1d9-26af614e019f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\user_libraries\managers">
+      <UniqueIdentifier>{e95ad768-394a-48af-9700-dfd96419678f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\user_libraries\global">
+      <UniqueIdentifier>{47438c95-0974-457f-887b-0325fedf40f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cgmath.h">
@@ -39,17 +48,35 @@
     <ClInclude Include="control.hpp">
       <Filter>Header Files\user_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="global.hpp">
-      <Filter>Header Files\user_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="glutil.hpp">
-      <Filter>Header Files\user_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="util.hpp">
-      <Filter>Header Files\user_libraries</Filter>
-    </ClInclude>
     <ClInclude Include="gl\glad\glad.h">
       <Filter>Header Files\cg_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="objvert.hpp">
+      <Filter>Header Files\user_libraries\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="celestial_object.hpp">
+      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
+    </ClInclude>
+    <ClInclude Include="star.hpp">
+      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
+    </ClInclude>
+    <ClInclude Include="planet.hpp">
+      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
+    </ClInclude>
+    <ClInclude Include="game_object_manager.h">
+      <Filter>Header Files\user_libraries\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="game_moderator.hpp">
+      <Filter>Header Files\user_libraries\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="global_constants.hpp">
+      <Filter>Header Files\user_libraries\global</Filter>
+    </ClInclude>
+    <ClInclude Include="util.hpp">
+      <Filter>Header Files\user_libraries\global</Filter>
+    </ClInclude>
+    <ClInclude Include="glutil.hpp">
+      <Filter>Header Files\user_libraries\global</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

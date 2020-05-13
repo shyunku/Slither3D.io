@@ -1,5 +1,27 @@
-#include "global.hpp"
+#include "global_constants.hpp"
 #include "control.hpp"
+#include "game_moderator.hpp"
+#include "camera.hpp"
+#include "objvert.hpp"
+
+/* --------------------------- Property Offsets --------------------------- */
+
+/* --------------------------- Global Objects  --------------------------- */
+GLFWwindow*						window = nullptr;
+ivec2							window_size = ivec2(960, 540);
+
+GLuint							program_id = 0;
+uint							frame_count = 0;
+ivec3							background_color = ivec3(0);
+
+GameModerator					game_moderator;
+
+/* --------------------------- Scene Objects  --------------------------- */
+Camera							camera;
+
+/* --------------------------- Vertex Properties  --------------------------- */
+ObjectVertexProperty			sphere_vertex_property = ObjectVertexProperty();
+
 
 void update()
 {
@@ -28,10 +50,10 @@ void render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
 
 	// Notify our program id to GL
-	glUseProgram(program_id);								
+	glUseProgram(program_id);			
 
 	// Render Objects
-
+	game_moderator.render(program_id);
 
 	// Swap Front and Back Buffers and display to screen
 	glfwSwapBuffers(window);
@@ -43,6 +65,7 @@ void initialize_environment()
 	window = cg_create_window(window_name, window_size.x, window_size.y);	
 	if (!window) terminate_with_code(1);
 	if (!cg_init_extensions(window)) terminate_with_code(2);
+	glfwMaximizeWindow(window);
 	
 	// Shader Setting
 	string shader_frag_path = string(root_path_str) + string(frag_shader_path_str);
@@ -51,12 +74,18 @@ void initialize_environment()
 	if (!program_id) terminate_with_code(3);
 
 	// GL State Setting
-	glClearColor(50 / 255.f, 10 / 255.f, 10 / 255.f, 1.f);
+	set_gl_background_color(background_color);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
 	// EventListener Setting
 	glfwSetMouseButtonCallback(window, mouse_event_listener);
+
+	// Vertex Property Setting
+	sphere_vertex_property = create_sphere_vertex_property();
+
+	// Game Moderator
+	game_moderator = GameModerator(sphere_vertex_property);
 }
 
 void process_thread()
@@ -68,7 +97,6 @@ void process_thread()
 		render();
 	}
 }
-
 int main(int argc, char* argv[])
 {
 	initialize_environment();

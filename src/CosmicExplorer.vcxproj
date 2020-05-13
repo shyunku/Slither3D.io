@@ -130,9 +130,15 @@
     <ClInclude Include="cgmath.h" />
     <ClInclude Include="cgut.h" />
     <ClInclude Include="control.hpp" />
-    <ClInclude Include="global.hpp" />
+    <ClInclude Include="game_moderator.hpp" />
+    <ClInclude Include="game_object_manager.h" />
+    <ClInclude Include="global_constants.hpp" />
     <ClInclude Include="glutil.hpp" />
     <ClInclude Include="gl\glad\glad.h" />
+    <ClInclude Include="objvert.hpp" />
+    <ClInclude Include="celestial_object.hpp" />
+    <ClInclude Include="planet.hpp" />
+    <ClInclude Include="star.hpp" />
     <ClInclude Include="util.hpp" />
   </ItemGroup>
   <ItemGroup>

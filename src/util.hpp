@@ -3,6 +3,16 @@
 
 using namespace std;
 
+inline float randf(float LO, float HI)
+{
+	return LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+}
+
+inline float distancef(vec3 v1, vec3 v2)
+{
+	return (v1 - v2).length();
+}
+
 string format_string(const string fmt, ...)
 {
 	int size = ((int)fmt.size()) * 2;
@@ -43,4 +53,14 @@ string get_current_time_string()
 void logger(string str)
 {
 	cout << get_current_time_string() << " " << str << endl;
+}
+
+void print_vec3(vec3 v, const char* msg)
+{
+	printf("%s = (%.2f, %.2f, %.2f)\n", msg, v.x, v.y, v.z);
+}
+
+void print_vec3(vec3 v)
+{
+	printf("(%.2f, %.2f, %.2f)\n", v.x, v.y, v.z);
 }

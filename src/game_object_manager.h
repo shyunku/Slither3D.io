@@ -19,6 +19,7 @@ public:
 
 	void render_all(uint program_id)
 	{
+		bind_all();
 		GLint uloc = glGetUniformLocation(program_id, "model_matrix");
 		for (vector<Star>::iterator iter = stars.begin(); iter != stars.end(); ++iter)
 		{
@@ -29,6 +30,6 @@ public:
 	void bind_all()
 	{
 		// bind sphere
-		//glBindVertexArray(sphere_vertex_property.vertex_array_ID);
+		glBindVertexArray(sphere_vertex_property.vertex_array_ID);
 	}
 }InGameObjectManager;

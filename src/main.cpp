@@ -3,6 +3,7 @@
 #include "game_moderator.hpp"
 #include "camera.hpp"
 #include "objvert.hpp"
+#include "util.hpp"
 
 /* --------------------------- Property Offsets --------------------------- */
 
@@ -65,7 +66,6 @@ void initialize_environment()
 	window = cg_create_window(window_name, window_size.x, window_size.y);	
 	if (!window) terminate_with_code(1);
 	if (!cg_init_extensions(window)) terminate_with_code(2);
-	glfwMaximizeWindow(window);
 	
 	// Shader Setting
 	string shader_frag_path = string(root_path_str) + string(frag_shader_path_str);
@@ -79,13 +79,19 @@ void initialize_environment()
 	glEnable(GL_DEPTH_TEST);
 
 	// EventListener Setting
-	glfwSetMouseButtonCallback(window, mouse_event_listener);
+	glfwSetWindowSizeCallback(window, window_reshape_listener);
+	glfwSetMouseButtonCallback(window, mouse_click_event_listener);
+	glfwSetKeyCallback(window, keyboard_event_listener);
+	glfwSetCursorPosCallback(window, mouse_motion_event_listener);
 
 	// Vertex Property Setting
 	sphere_vertex_property = create_sphere_vertex_property();
 
 	// Game Moderator
 	game_moderator = GameModerator(sphere_vertex_property);
+
+	// Initial User Action
+	print_version_of_app();
 }
 
 void process_thread()
@@ -97,6 +103,7 @@ void process_thread()
 		render();
 	}
 }
+
 int main(int argc, char* argv[])
 {
 	initialize_environment();

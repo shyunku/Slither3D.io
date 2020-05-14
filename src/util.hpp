@@ -1,4 +1,5 @@
 #pragma once
+#include "global_constants.hpp"
 #include <iostream>
 
 using namespace std;
@@ -63,4 +64,9 @@ void print_vec3(vec3 v, const char* msg)
 void print_vec3(vec3 v)
 {
 	printf("(%.2f, %.2f, %.2f)\n", v.x, v.y, v.z);
+}
+
+void print_version_of_app()
+{
+	cout << app_name << " " << version_str << endl;
 }

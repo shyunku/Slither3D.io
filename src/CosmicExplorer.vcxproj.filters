@@ -34,6 +34,15 @@
     <Filter Include="Header Files\user_libraries\global">
       <UniqueIdentifier>{47438c95-0974-457f-887b-0325fedf40f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader Files\text">
+      <UniqueIdentifier>{8b47f53f-17bd-45c9-bbfe-6b0d7e255b43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader Files\default">
+      <UniqueIdentifier>{b8ef432e-180e-41bb-bf86-7ea7f10532f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\fonts">
+      <UniqueIdentifier>{755a6eb1-b016-4bdd-8b56-93d327e0d1a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cgmath.h">
@@ -63,9 +72,6 @@
     <ClInclude Include="planet.hpp">
       <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
     </ClInclude>
-    <ClInclude Include="game_object_manager.h">
-      <Filter>Header Files\user_libraries\managers</Filter>
-    </ClInclude>
     <ClInclude Include="game_moderator.hpp">
       <Filter>Header Files\user_libraries\managers</Filter>
     </ClInclude>
@@ -78,6 +84,15 @@
     <ClInclude Include="glutil.hpp">
       <Filter>Header Files\user_libraries\global</Filter>
     </ClInclude>
+    <ClInclude Include="game_object_manager.hpp">
+      <Filter>Header Files\user_libraries\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_truetype.h">
+      <Filter>Header Files\cg_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="text_manager.hpp">
+      <Filter>Header Files\user_libraries\managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -86,13 +101,27 @@
     <ClCompile Include="gl\glad\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="player.hpp">
+      <Filter>Header Files\user_libraries\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\bin\shaders\shader.frag">
-      <Filter>Shader Files</Filter>
+    <None Include="..\bin\shaders\text\text.frag">
+      <Filter>Shader Files\text</Filter>
     </None>
-    <None Include="..\bin\shaders\shader.vert">
-      <Filter>Shader Files</Filter>
+    <None Include="..\bin\shaders\text\text.vert">
+      <Filter>Shader Files\text</Filter>
     </None>
+    <None Include="..\bin\shaders\default\default.frag">
+      <Filter>Shader Files\default</Filter>
+    </None>
+    <None Include="..\bin\shaders\default\default.vert">
+      <Filter>Shader Files\default</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\consola.ttf">
+      <Filter>Resource Files\fonts</Filter>
+    </Font>
   </ItemGroup>
 </Project>

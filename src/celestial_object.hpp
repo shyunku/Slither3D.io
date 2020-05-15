@@ -69,8 +69,9 @@ public:
 	{
 		this->revolve_property = RevolveProperty();
 	}
-	void render_object(GLint uloc, uint sphere_triangles)
+	void render_sphere(GLint uloc, uint sphere_triangles)
 	{
+		// Self-render
 		if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, get_model_matrix());
 		glDrawElements(GL_TRIANGLES, sphere_triangles, GL_UNSIGNED_INT, nullptr);
 	}

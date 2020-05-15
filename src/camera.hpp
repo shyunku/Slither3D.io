@@ -18,10 +18,9 @@ public:
 		vec3 up = vec3(0, 1, 0);
 		view_matrix = mat4::look_at(eye, at, up);
 	}
-	camera_(vec3 initial_eye, vec3 initial_at)
+	camera_(vec3 initial_eye, vec3 initial_at, vec3 initial_up)
 	{
-		vec3 up = vec3(0, 1, 0);
-		view_matrix = mat4::look_at(initial_eye, initial_at, up);
+		view_matrix = mat4::look_at(initial_eye, initial_at, initial_up);
 	}
 	void set_aspect_ratio(float ratio)
 	{

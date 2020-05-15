@@ -131,7 +131,7 @@
     <ClInclude Include="cgut.h" />
     <ClInclude Include="control.hpp" />
     <ClInclude Include="game_moderator.hpp" />
-    <ClInclude Include="game_object_manager.h" />
+    <ClInclude Include="game_object_manager.hpp" />
     <ClInclude Include="global_constants.hpp" />
     <ClInclude Include="glutil.hpp" />
     <ClInclude Include="gl\glad\glad.h" />
@@ -139,15 +139,23 @@
     <ClInclude Include="celestial_object.hpp" />
     <ClInclude Include="planet.hpp" />
     <ClInclude Include="star.hpp" />
+    <ClInclude Include="stb_truetype.h" />
+    <ClInclude Include="text_manager.hpp" />
     <ClInclude Include="util.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gl\glad\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="player.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\bin\shaders\shader.frag" />
-    <None Include="..\bin\shaders\shader.vert" />
+    <None Include="..\bin\shaders\default\default.frag" />
+    <None Include="..\bin\shaders\default\default.vert" />
+    <None Include="..\bin\shaders\text\text.frag" />
+    <None Include="..\bin\shaders\text\text.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\consola.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

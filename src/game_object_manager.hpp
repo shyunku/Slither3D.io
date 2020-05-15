@@ -19,17 +19,16 @@ public:
 
 	void render_all(uint program_id)
 	{
-		bind_all();
 		GLint uloc = glGetUniformLocation(program_id, "model_matrix");
+
+		// Notify our program id to GL
+		glUseProgram(program_id);
+
+		// Bind Sphere and render
+		glBindVertexArray(sphere_vertex_property.vertex_array_ID);
 		for (vector<Star>::iterator iter = stars.begin(); iter != stars.end(); ++iter)
 		{
-			iter->render(uloc, sphere_vertex_property.get_triangles_num());
+			iter->render_sphere(uloc, sphere_vertex_property.get_triangles_num());
 		}
-	}
-
-	void bind_all()
-	{
-		// bind sphere
-		glBindVertexArray(sphere_vertex_property.vertex_array_ID);
 	}
 }InGameObjectManager;

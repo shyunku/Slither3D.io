@@ -12,55 +12,55 @@
 GLFWwindow*						window = nullptr;
 ivec2							window_size = ivec2(960, 540);
 
-GLuint							program_id = 0;
-GLuint							text_program_id;
 uint							frame_count = 0;
+float							elapsed_time = 0;
+float							time_tick = 0;
 ivec3							background_color = ivec3(0);
 
 GameModerator					game_moderator;
 
+/* --------------------------- Global Shader Programs  --------------------------- */
+GLuint							default_program;
+GLuint							text_program;
+
 /* --------------------------- Scene Objects  --------------------------- */
 Player							player = Player();
-Camera							main_camera = std::move(player.camera);
 
 /* --------------------------- Vertex Properties  --------------------------- */
-ObjectVertexProperty			sphere_vertex_property = ObjectVertexProperty();
+ObjectVertexProperty			sphere_vertex_property;
+ObjectVertexProperty			circle_vertex_property;
 
 
 void update()
 {
-	GLint uloc;
+	static float last_update_flag = 0;
 
-	// Update aspect ratio of camera in terms of window size (resizing)
-	// if window wouldn't be resized, please declare static method
-	main_camera.set_aspect_ratio(window_size.x / float(window_size.y));
-	main_camera.revalidate_projection_matrix();
+	// Update Camera property
+	set_main_camera(player.camera);
 
-	// Update uniform variables in shaders
-	uloc = glGetUniformLocation(program_id, "view_matrix");			
-	if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, main_camera.view_matrix);
-	uloc = glGetUniformLocation(program_id, "projection_matrix");	
-	if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, main_camera.projection_matrix);
+	// Update time
+	elapsed_time = float(glfwGetTime());
+	time_tick = elapsed_time - last_update_flag;
+	last_update_flag = elapsed_time;
 
 	// Update Objects
-
+	//player.update();
+	game_moderator.update(time_tick);
 }
 
 void render()
 {
-	GLint uloc = 0;
-
-	// Time Usage : float time = get_glfw_curtime();
-
 	// Clear screen and clear depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
 
-	
+	draw_string("FrameCount: "+to_string(frame_count), 20, 20, 0.3f, ucol::white);
+	draw_string(format_string("Elapsed time: %.2fs", elapsed_time), 20, 35, 0.3f, ucol::white);
+	draw_string(format_string("Update time tick: %.4fs", time_tick), 20, 50, 0.3f, ucol::white);
+	draw_string(format_string("FPS: %d", int(1/time_tick)), 20, 65, 0.3f, ucol::white);
+	draw_string(format_string("Camera Pos: (%.2f,%.2f,%.2f)", player.pos.x, player.pos.y, player.pos.z), 20, 80, 0.3f, ucol::white);
 
 	// Render Objects
-	game_moderator.render(program_id);
-
-	draw_string("FrameCount: " + to_string(frame_count), 20, 20, 0.3f, vec4(0.8f, 0.8f, 0.8f, 1.0f));
+	game_moderator.render();
 
 	// Swap Front and Back Buffers and display to screen
 	glfwSwapBuffers(window);
@@ -74,15 +74,12 @@ void initialize_environment()
 	if (!cg_init_extensions(window)) terminate_with_code(2);
 	
 	// Shader Setting
-	string shader_frag_path = string(root_path_str) + string(default_frag_path);
-	string shader_vert_path = string(root_path_str) + string(default_vert_path);
-	program_id = cg_create_program(shader_vert_path.c_str(), shader_frag_path.c_str());
-	if (!program_id) terminate_with_code(3);
+	default_program = create_shader_program("default");
 
 	// GL State Setting
 	set_gl_background_color(background_color);
 	glEnable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -98,9 +95,10 @@ void initialize_environment()
 
 	// Vertex Property Setting
 	sphere_vertex_property = create_sphere_vertex_property();
+	circle_vertex_property = create_circle_vertex_property();
 
 	// Game Moderator
-	game_moderator = GameModerator(sphere_vertex_property);
+	game_moderator = GameModerator(sphere_vertex_property, circle_vertex_property);
 
 	// Initial User Action
 	print_version_of_app();

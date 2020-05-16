@@ -63,15 +63,6 @@
     <ClInclude Include="objvert.hpp">
       <Filter>Header Files\user_libraries\objects</Filter>
     </ClInclude>
-    <ClInclude Include="celestial_object.hpp">
-      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
-    </ClInclude>
-    <ClInclude Include="star.hpp">
-      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
-    </ClInclude>
-    <ClInclude Include="planet.hpp">
-      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
-    </ClInclude>
     <ClInclude Include="game_moderator.hpp">
       <Filter>Header Files\user_libraries\managers</Filter>
     </ClInclude>
@@ -92,6 +83,12 @@
     </ClInclude>
     <ClInclude Include="text_manager.hpp">
       <Filter>Header Files\user_libraries\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="celestial.hpp">
+      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
+    </ClInclude>
+    <ClInclude Include="celestial_objects.hpp">
+      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

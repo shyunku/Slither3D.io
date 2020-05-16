@@ -12,11 +12,11 @@ private:
 	}
 	inline void update_camera()
 	{
-
+		camera.update(pos, vec3(0), up);
 	}
 public:
-	vec3		pos = vec3(0, 0, 5);
-	vec3		direction = vec3(0, 0, 0);
+	vec3		pos = vec3(0, 4, 12);
+	vec3		direction = vec3(0, 0, -1);
 	vec3		up = vec3(0,1,0);
 	Camera		camera = Camera(pos, vec3(0), up);
 	player_()

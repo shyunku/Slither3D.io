@@ -1,16 +1,17 @@
 #pragma once
+#include "global_constants.hpp"
 #include "cgmath.h"
 #include "cgut.h"
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb_truetype.h"
-#include "global_constants.hpp"
+#include "glutil.hpp"
 
 /*
 	Documentation on http://cg.skku.edu/course/cg/slides/supp-02-text.pdf
 */
 using namespace std;
 
-extern GLuint text_program_id;
+extern GLuint text_program;
 
 struct stbtt_char_t
 {
@@ -109,7 +110,7 @@ void text_initial_setting()
 	string text_frag_fullpath = string(root_path_str) + string(text_frag_path);
 	string text_vert_fullpath = string(root_path_str) + string(text_vert_path);
 
-	text_program_id = cg_create_program(text_vert_fullpath.c_str(), text_frag_fullpath.c_str());
+	text_program = create_shader_program("text");
 
 
 	// Create Quad
@@ -139,7 +140,7 @@ void draw_string(string text, GLint _x, GLint _y, GLfloat scale, vec4 color)
 	extern ivec2 window_size;
 	GLfloat x = GLfloat(_x);
 	GLfloat y = GLfloat(_y);
-	GLint uloc = glGetUniformLocation(text_program_id, "textColor");
+	GLint uloc = glGetUniformLocation(text_program, "textColor");
 
 	if (uloc < 0)
 	{
@@ -147,7 +148,7 @@ void draw_string(string text, GLint _x, GLint _y, GLfloat scale, vec4 color)
 		exit(-1);
 	}
 
-	glUseProgram(text_program_id);
+	glUseProgram(text_program);
 	glUniform4f(uloc, color.r, color.g, color.b, color.a);
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);
@@ -187,7 +188,7 @@ void draw_string(string text, GLint _x, GLint _y, GLfloat scale, vec4 color)
 			exit(-1);
 		}
 
-		uloc = glGetUniformLocation(text_program_id, "text_matrix");
+		uloc = glGetUniformLocation(text_program, "text_matrix");
 		glUniformMatrix4fv(uloc, 1, GL_TRUE, text_matrix);
 
 		glBindTexture(GL_TEXTURE_2D, ch.textureID);

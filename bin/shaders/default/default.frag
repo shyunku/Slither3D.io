@@ -8,7 +8,10 @@
 in vec2 tc;
 out vec4 fragColor;
 
+uniform bool is_using_solid_color;
+uniform vec4 solid_color;
+
 void main()
 {
-	fragColor = vec4(tc.xy, 0, 1);
+	fragColor = is_using_solid_color ? solid_color : vec4(tc.yyy, 1);
 }

@@ -18,7 +18,16 @@ void mouse_click_event_listener(GLFWwindow* window, int button, int action, int 
 
 void mouse_motion_event_listener(GLFWwindow* window, double x, double y)
 {
-	//logger("Mouse Motion: (" + to_string(x) + ", " + to_string(y) + ")");
+	static double last_x = 0;
+	static double last_y = 0;
+
+	double x_diff = x - last_x;
+	double y_diff = y - last_y;
+
+	last_x = x;
+	last_y = y;
+
+	//logger("Mouse Motion: (" + to_string(x_diff) + ", " + to_string(y_diff) + ")");
 }
 
 void keyboard_event_listener(GLFWwindow* window, int key, int scancode, int action, int mods)

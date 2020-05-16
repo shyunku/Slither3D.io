@@ -1,6 +1,7 @@
 #pragma once
-#include "global_constants.hpp"
 #include <iostream>
+#include "global_constants.hpp"
+#include "cgut.h"
 
 using namespace std;
 

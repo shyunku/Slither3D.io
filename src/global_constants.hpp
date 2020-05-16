@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include "cgmath.h"
 
 /* --------------------------- Constant Strings  --------------------------- */
 static const char*				window_name = "CosmicExplorer";
@@ -13,4 +14,10 @@ static const char*				text_frag_path = "shaders/text/text.frag";
 static const char*				text_vert_path = "shaders/text/text.vert";
 
 static const std::string		app_name = "CosmicExplorer";
-static const std::string		version_str = "0.0.3v";
+static const std::string		version_str = "0.0.4v";
+
+/* --------------------------- Constant Colors  --------------------------- */
+namespace ucol
+{
+	vec4 white = vec4(1.f, 1.f, 1.f, 1.f);
+}

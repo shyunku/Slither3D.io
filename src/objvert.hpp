@@ -5,6 +5,8 @@
 static const uint	sphere_latitude_segment_num = 64;	// horizontal lines
 static const uint	sphere_longitude_segment_num = 128;	// vertical lines
 
+static const uint	orbit_segment_num = 64;
+
 using namespace std;
 
 typedef class object_vertex_property
@@ -32,7 +34,47 @@ public:
 // Circle vertex property
 ObjectVertexProperty create_circle_vertex_property()
 {
-	return ObjectVertexProperty();
+	vector<vertex> vertices;
+
+	for (size_t i = 0; i < orbit_segment_num; i++)
+	{
+		float angle = (float)i * (2 * PI) / (float)orbit_segment_num;
+		vertex dots = {
+			vec3(cosf(angle), 0, sinf(angle)),
+			vec3(cosf(angle), 0, sinf(angle)),
+			vec2(0,1) };
+		vertices.push_back(dots);
+	}
+
+	// indexing vertex buffer
+	vector<uint>	indices;
+	uint			triangle = 0;
+	uint			vertex_array_ID;
+	uint			vertex_buffer = 0;
+	uint			index_buffer = 0;
+
+	for (int i = 0; i < orbit_segment_num; i++)
+	{
+		indices.push_back(i);
+		indices.push_back((i + 1) % orbit_segment_num);
+		indices.push_back((i + 2) % orbit_segment_num);
+		triangle++;
+	}
+
+	// generation of vertex buffer: use verticess as it is
+	glGenBuffers(1, &vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+
+	// geneation of index buffer
+	glGenBuffers(1, &index_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * indices.size(), &indices[0], GL_STATIC_DRAW);
+
+	vertex_array_ID = cg_create_vertex_array(vertex_buffer, index_buffer);
+	if (!vertex_array_ID) { printf("%s(): failed to create vertex aray\n", __func__); exit(-1); }
+
+	return ObjectVertexProperty(vertex_array_ID, triangle);
 }
 
 // Sphere vertex property

@@ -22,6 +22,10 @@ public:
 	{
 		view_matrix = mat4::look_at(initial_eye, initial_at, initial_up);
 	}
+	void update(vec3 initial_eye, vec3 initial_at, vec3 initial_up)
+	{
+		view_matrix = mat4::look_at(initial_eye, initial_at, initial_up);
+	}
 	void set_aspect_ratio(float ratio)
 	{
 		this->aspect_ratio = ratio;
@@ -29,5 +33,11 @@ public:
 	void revalidate_projection_matrix()
 	{
 		this->projection_matrix = mat4::perspective(fov, aspect_ratio, dNear, dFar);
+	}
+	camera_ & operator=(const camera_ &allocate_camera)
+	{
+		aspect_ratio = allocate_camera.aspect_ratio;
+		view_matrix = allocate_camera.view_matrix;
+		projection_matrix = allocate_camera.projection_matrix;
 	}
 }Camera;

@@ -343,6 +343,13 @@ struct mat3
 	}
 };
 
+typedef struct standard_view_model
+{
+	vec3 look_at;
+	vec3 up;
+	vec3 right;
+}StandardViewModel;
+
 //*******************************************************************
 // matrix 4x4: uses a standard row-major notation
 struct mat4
@@ -434,6 +441,15 @@ struct mat4
 
 		return *this;
 	};
+
+	StandardViewModel parse()
+	{
+		vec3 n = vec3(_31, _32, _33);
+		vec3 u = vec3(_11, _12, _13);
+		vec3 v = vec3(_21, _22, _23);
+
+		return { -n, v, u };
+	}
 
 	mat4& set_perspective( float fovy, float aspect, float dnear, float dfar )
 	{

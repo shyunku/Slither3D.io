@@ -2,6 +2,9 @@
 #include "cgmath.h"
 #include "camera.hpp"
 
+extern void print_vec3(vec3 v);
+extern void print_vec3(vec3 v, const char* msg);
+
 typedef class player_
 {
 private:
@@ -10,21 +13,16 @@ private:
 	{
 		pos += direction.normalize() * default_velocity;
 	}
-	inline void update_camera()
-	{
-		camera.update(pos, vec3(0), up);
-	}
 public:
 	vec3		pos = vec3(0, 4, 12);
 	vec3		direction = vec3(0, 0, -1);
-	vec3		up = vec3(0,1,0);
-	Camera		camera = Camera(pos, vec3(0), up);
+	Camera		camera;
 	player_()
 	{
 	}
 	inline void update()
 	{
-		update_pos();
-		update_camera();
+		//update_pos();
+		camera.update(pos);
 	}
 }Player;

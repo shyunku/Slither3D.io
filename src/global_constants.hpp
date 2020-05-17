@@ -14,7 +14,7 @@ static const char*				text_frag_path = "shaders/text/text.frag";
 static const char*				text_vert_path = "shaders/text/text.vert";
 
 static const std::string		app_name = "CosmicExplorer";
-static const std::string		version_str = "0.0.4v";
+static const std::string		version_str = "0.0.5v";
 
 /* --------------------------- Constant Colors  --------------------------- */
 namespace ucol

@@ -18,6 +18,7 @@ float							time_tick = 0;
 ivec3							background_color = ivec3(0);
 
 GameModerator					game_moderator;
+KeypressTracker					keypress_tracker;
 
 /* --------------------------- Global Shader Programs  --------------------------- */
 GLuint							default_program;
@@ -44,7 +45,11 @@ void update()
 	last_update_flag = elapsed_time;
 
 	// Update Objects
-	//player.update();
+	player.update();
+	//if (keypress_tracker.KEY_W)
+	//{
+
+	//}
 	game_moderator.update(time_tick);
 }
 
@@ -58,6 +63,10 @@ void render()
 	draw_string(format_string("Update time tick: %.4fs", time_tick), 20, 50, 0.3f, ucol::white);
 	draw_string(format_string("FPS: %d", int(1/time_tick)), 20, 65, 0.3f, ucol::white);
 	draw_string(format_string("Camera Pos: (%.2f,%.2f,%.2f)", player.pos.x, player.pos.y, player.pos.z), 20, 80, 0.3f, ucol::white);
+	draw_string(format_string("Camera Direction: (%.2f,%.2f,%.2f)", player.camera.look_direction.x, player.camera.look_direction.y, player.camera.look_direction.z),
+		20, 95, 0.3f, ucol::white);
+	draw_string(format_string("Camera Up: (%.2f,%.2f,%.2f)", player.camera.up.x, player.camera.up.y, player.camera.up.z),
+		20, 110, 0.3f, ucol::white);
 
 	// Render Objects
 	game_moderator.render();
@@ -102,6 +111,13 @@ void initialize_environment()
 
 	// Initial User Action
 	print_version_of_app();
+	keypress_tracker =
+	{
+		false,
+		false,
+		false,
+		false,
+	};
 }
 
 void process_thread()

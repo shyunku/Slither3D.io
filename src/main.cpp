@@ -6,6 +6,7 @@
 #include "util.hpp"
 #include "player.hpp"
 #include "text_manager.hpp"
+#include "command.hpp"
 
 
 /* --------------------------- Global Objects  --------------------------- */
@@ -120,7 +121,7 @@ void initialize_environment()
 	};
 }
 
-void process_thread()
+void main_process()
 {
 	for (; !glfwWindowShouldClose(window); frame_count++)
 	{
@@ -133,7 +134,11 @@ void process_thread()
 int main(int argc, char* argv[])
 {
 	initialize_environment();
-	process_thread();
+
+	// Create thread for input command
+	thread command_thread(&command_listener);
+
+	main_process();
 
 	return 0;
 }

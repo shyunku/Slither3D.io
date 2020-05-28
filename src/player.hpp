@@ -8,10 +8,12 @@ extern void print_vec3(vec3 v, const char* msg);
 typedef class player_
 {
 private:
-	float		default_velocity = 0.01f;
+	float		default_velocity = 0.0005f;
+	bool		fixed = true;
 	inline void update_pos()
 	{
-		pos += direction.normalize() * default_velocity;
+		if (fixed) return;
+		pos += camera.look_direction.normalize() * default_velocity;
 	}
 public:
 	vec3		pos = vec3(0, 4, 12);
@@ -22,7 +24,11 @@ public:
 	}
 	inline void update()
 	{
-		//update_pos();
+		update_pos();
 		camera.update(pos);
+	}
+	inline void set_fix(bool fix)
+	{
+		fixed = fix;
 	}
 }Player;

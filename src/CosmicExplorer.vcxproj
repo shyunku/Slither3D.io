@@ -129,6 +129,7 @@
     <ClInclude Include="camera.hpp" />
     <ClInclude Include="cgmath.h" />
     <ClInclude Include="cgut.h" />
+    <ClInclude Include="command.hpp" />
     <ClInclude Include="control.hpp" />
     <ClInclude Include="game_moderator.hpp" />
     <ClInclude Include="game_object_manager.hpp" />

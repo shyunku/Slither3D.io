@@ -90,6 +90,9 @@
     <ClInclude Include="control.hpp">
       <Filter>Header Files\user_libraries\managers</Filter>
     </ClInclude>
+    <ClInclude Include="command.hpp">
+      <Filter>Header Files\user_libraries\managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

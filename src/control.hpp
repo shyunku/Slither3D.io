@@ -5,7 +5,8 @@
 #include "glutil.hpp"
 #include "player.hpp"
 
-typedef struct track_keypress {
+typedef struct track_keypress 
+{
 	bool KEY_W;
 	bool KEY_A;
 	bool KEY_S;

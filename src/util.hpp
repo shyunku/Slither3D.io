@@ -10,6 +10,11 @@ inline float randf(float LO, float HI)
 	return LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
 }
 
+inline int randi(int LO, int HI)
+{
+	return LO + rand() % (HI - LO);
+}
+
 inline float distancef(vec3 v1, vec3 v2)
 {
 	return (v1 - v2).length();
@@ -51,11 +56,6 @@ string get_current_time_string()
 	}
 	return format_string("[%02d:%02d.%03ds]", m, s, ms);
 }
-
-//void logger(string str)
-//{
-//	cout << get_current_time_string() << " " << str << endl;
-//}
 
 void logger(const string fmt, ...)
 {

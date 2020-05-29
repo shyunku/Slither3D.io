@@ -1,13 +1,16 @@
 #pragma once
 #include "cgut.h"
 #include "cgmath.h"
+#include "log_manager.hpp"
 
 using namespace std;
 
 extern inline float randf(float LO, float HI);
+extern inline int randi(int LO, int HI);
 extern GLuint get_validated_uniform_location(GLuint shader_program, const char* name);
 extern const float WORLD_BORDER_RADIUS;
 extern void print_vec3(vec3 v);
+extern string format_string(const string fmt, ...);
 
 typedef class worm_body_
 {
@@ -35,9 +38,9 @@ public:
 			mat4::rotate(vec3(0, 1, 0), 0) *
 			mat4::scale(radius);
 	}
-	void update_and_move(vec3 prev_parent_dir, float move_distance)
+	void update_and_move(vec3 prev_parent_pos, float move_distance)
 	{
-		direction = prev_parent_dir;
+		direction = (prev_parent_pos - pos).normalize();
 		pos += direction * move_distance;
 	}
 }WormBody;
@@ -47,6 +50,7 @@ typedef class worm_
 private:
 	const float			BODY_GAP = 0.6f;
 	vec4				color;
+	string				UID;
 	void render_head(GLuint shader_program, uint sphere_triangles)
 	{
 		GLint uloc;
@@ -87,13 +91,13 @@ private:
 		return vec3(cos(theta) * cos(alpha), sin(theta) * cos(alpha), sin(alpha)).normalize();
 	}
 public:
-	float				speed = 1.f;
+	float				speed = 5.f;
 	WormBody			head;
 	vector<WormBody>	body;
 	bool				is_player = false;
 
 	// AI area
-	const float			AUTO_DIRECTION_CHANGE_PERIOD = 2.f;
+	float				auto_direction_change_period = randf(2.f, 4.f);
 	float				elapsed_direction_change_timestamp = 0;
 	vec3				decided_direction = vec3(0);
 
@@ -118,6 +122,8 @@ public:
 			WormBody child = WormBody(head.pos - BODY_GAP * head.direction * (float)i, initd);
 			body.push_back(child);
 		}
+
+		UID = format_string("%04d-%04d", randi(0, 10000), randi(0, 10000));
 	}
 	worm_(vec3 initial_pos, uint initial_body_num)
 	{
@@ -136,6 +142,7 @@ public:
 			WormBody child = WormBody(head.pos - BODY_GAP * head.direction * (float)i, initd);
 			body.push_back(child);
 		}
+		UID = format_string("%04d-%04d", randi(0, 10000), randi(0, 10000));
 	}
 	void render_sphere(GLuint shader_program, uint sphere_triangles)
 	{
@@ -144,6 +151,7 @@ public:
 	}
 	void update(float time_tick)
 	{
+		extern GameLogDrawer gld;
 		if (!is_player)
 		{
 			// 나중에 위로 뺄 것
@@ -153,24 +161,29 @@ public:
 			for (wit iter = body.end() - 1; iter > body.begin(); --iter)
 			{
 				wit parent = iter - 1;
-				iter->update_and_move(parent->direction, move_dist);
+				iter->update_and_move(parent->pos, move_dist);
 			}
 			wit eldest_child = body.begin();
-			eldest_child->update_and_move(head.direction, move_dist);
+			eldest_child->update_and_move(head.pos, move_dist);
 
+			// move algorithm as AI
 			elapsed_direction_change_timestamp += time_tick;
-			if (elapsed_direction_change_timestamp > AUTO_DIRECTION_CHANGE_PERIOD)
+			if (elapsed_direction_change_timestamp > auto_direction_change_period)
 			{
 				elapsed_direction_change_timestamp = 0;
 				head.direction = get_random_vector();
+				auto_direction_change_period = randf(2.f, 4.f);
+				gld.add("Worm[UID: " + UID + "] changed its direction");
 			}
-			head.update_and_move(head.direction, move_dist);
-
-			// move algorithm as AI
+			head.update_and_move(head.direction + head.pos, move_dist);
 		}
 	}
 	void make_player()
 	{
 		is_player = true;
+	}
+	string get_uid()
+	{
+		return UID;
 	}
 }Worm;

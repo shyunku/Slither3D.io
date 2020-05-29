@@ -11,7 +11,7 @@
 
 /* --------------------------- Global Objects  --------------------------- */
 GLFWwindow*						window = nullptr;
-ivec2							window_size = ivec2(960, 540);
+ivec2							window_size = ivec2(1080, 720);
 
 uint							frame_count = 0;
 float							elapsed_time = 0;
@@ -69,12 +69,17 @@ void render()
 
 	float fFPS = 1.f / time_tick;
 
+	// App Information Draw
 	aid.draw(app_name + " " + version_str);
 
+	// Static Value Drawer
 	svd.draw("FrameCount: " + to_string(frame_count));
 	svd.draw(format_string("Elapsed time: %.2fs", elapsed_time));
 	svd.draw(format_string("Update time tick: %.4fs", time_tick));
 	svd.draw(format_string("FPS: %d", int(fFPS)));
+
+	// Game Event Log Panel
+	gld.draw_all();
 
 	// Clear Stacked Logs
 	aid.clear_stack();

@@ -14,7 +14,7 @@ static const char*				text_frag_path = "shaders/text/text.frag";
 static const char*				text_vert_path = "shaders/text/text.vert";
 
 static const std::string		app_name = "Slither3D.io";
-static const std::string		version_str = "0.1.2v - Beta";
+static const std::string		version_str = "0.1.3v - Beta";
 
 static const uint				FPS_LIMIT = 144;
 
@@ -23,9 +23,11 @@ namespace ucol
 {
 	const vec4 white			= vec4(1.f, 1.f, 1.f, 1.f);
 	const vec4 red				= vec4(1.f, 0.f, 0.f, 1.f);
+	
+	const vec4 light_red		= vec4(1.f, 0.3f, 0.3f, 1.f);
 
 	const vec4 standard_log		= vec4(1.f, 1.f, 1.f, 0.7f);
-	const vec4 light_red		= vec4(1.f, 0.3f, 0.3f, 1.f);
+	const vec4 event_log		= vec4(1.f, 0.9f, 0.6f, 0.7f);
 }
 
 /* --------------------------- Constant Ingame  --------------------------- */

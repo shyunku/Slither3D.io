@@ -22,11 +22,11 @@ public:
 		: sphere_vertex_property(sphere_vertex_property), 
 		circle_vertex_property(circle_vertex_property)
 	{
-		uint initial_worm_num = 20;
+		uint initial_worm_num = 80;
 
 		for (uint i = 0; i < initial_worm_num - 1; i++)
 		{
-			Worm worm = Worm(15);
+			Worm worm = Worm(30);
 			worms.push_back(worm);
 		}
 

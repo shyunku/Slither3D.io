@@ -14,7 +14,7 @@ static const char*				text_frag_path = "shaders/text/text.frag";
 static const char*				text_vert_path = "shaders/text/text.vert";
 
 static const std::string		app_name = "Slither3D.io";
-static const std::string		version_str = "0.1.3v - Beta";
+static const std::string		version_str = "0.1.4v - Beta";
 
 static const uint				FPS_LIMIT = 144;
 
@@ -31,4 +31,4 @@ namespace ucol
 }
 
 /* --------------------------- Constant Ingame  --------------------------- */
-const float						WORLD_BORDER_RADIUS = 300.f;
+const float						WORLD_BORDER_RADIUS = 200.f;

@@ -5,6 +5,11 @@
 
 using namespace std;
 
+inline float rand_direction()
+{
+	return static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2*PI));
+}
+
 inline float randf(float LO, float HI)
 {
 	return LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
@@ -87,6 +92,11 @@ void print_vec3(vec3 v, const char* msg)
 void print_vec3(vec3 v)
 {
 	printf("(%.2f, %.2f, %.2f)\n", v.x, v.y, v.z);
+}
+
+string get_vec3_string(vec3 v)
+{
+	return format_string("(%.2f, %.2f, %.2f)", v.x, v.y, v.z);
 }
 
 void print_version_of_app()

@@ -59,7 +59,7 @@ void update()
 	//}
 	game_moderator.update(time_tick);
 
-	Sleep((int)(1000.f / FPS_LIMIT));
+	//Sleep((int)(1000.f / FPS_LIMIT));
 }
 
 void render()

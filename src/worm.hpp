@@ -3,14 +3,18 @@
 #include "cgmath.h"
 #include "log_manager.hpp"
 
+#define AUTO_DIRECTION_CHANGE_PERIOD_KEYWORD randf(0.3f, 3.f)
+
 using namespace std;
 
 extern inline float randf(float LO, float HI);
+extern inline float rand_direction();
 extern inline int randi(int LO, int HI);
 extern GLuint get_validated_uniform_location(GLuint shader_program, const char* name);
 extern const float WORLD_BORDER_RADIUS;
 extern void print_vec3(vec3 v);
 extern string format_string(const string fmt, ...);
+extern string get_vec3_string(vec3 v);
 
 typedef class worm_body_
 {
@@ -49,6 +53,8 @@ typedef class worm_
 {
 private:
 	const float			BODY_GAP = 0.6f;
+	const float			MIN_DIRECTION_CHANGE = PI / 4;
+	const float			MAX_DIRECTION_CHANGE = PI / 2;
 	vec4				color;
 	string				UID;
 	void render_head(GLuint shader_program, uint sphere_triangles)
@@ -90,6 +96,15 @@ private:
 		float alpha = randf(0, 2 * PI);
 		return vec3(cos(theta) * cos(alpha), sin(theta) * cos(alpha), sin(alpha)).normalize();
 	}
+	vec3 get_restricted_vector(vec3 original, float max_difference)
+	{
+		float co = cosf(max_difference);
+		float so = sinf(max_difference);
+		vec3 virtual_x_vector = vec3(1, 1, (co - original.x - original.y) / original.z).normalize();
+		vec3 virtual_y_vector = original.cross(virtual_x_vector).normalize();
+		float virtual_random_angle = rand_direction();
+		return (co * original + so * (cosf(virtual_random_angle) * virtual_x_vector + sinf(virtual_random_angle) * virtual_y_vector)).normalize();
+	}
 public:
 	float				speed = 5.f;
 	WormBody			head;
@@ -97,25 +112,23 @@ public:
 	bool				is_player = false;
 
 	// AI area
-	float				auto_direction_change_period = randf(2.f, 4.f);
+	float				auto_direction_change_period = AUTO_DIRECTION_CHANGE_PERIOD_KEYWORD;
 	float				elapsed_direction_change_timestamp = 0;
 	vec3				decided_direction = vec3(0);
 
 	worm_() {}
 	worm_(uint initial_body_num)
 	{
-		float theta = randf(0, 2 * PI);
-		float alpha = randf(0, 2 * PI);
+		float theta = rand_direction();
+		float alpha = rand_direction();
 		vec3 initd = get_random_vector();
 
 		head.direction = initd;
 
 		float head_pos_rad = randf(0, WORLD_BORDER_RADIUS);
-		float pos_theta = randf(0, 2 * PI);
-		float pos_alpha = randf(0, 2 * PI);
 		head = WormBody(head_pos_rad * get_random_vector(), initd);
 
-		color = vec4(randf(0, 1), randf(0, 1), randf(0, 1), 1);
+		color = vec4(randf(0.2f, 1), randf(0.2f, 1), randf(0.2f, 1), 1);
 
 		for (size_t i = 1; i <= initial_body_num; i++)
 		{
@@ -127,8 +140,8 @@ public:
 	}
 	worm_(vec3 initial_pos, uint initial_body_num)
 	{
-		float theta = randf(0, 2 * PI);
-		float alpha = randf(0, 2 * PI);
+		float theta = rand_direction();
+		float alpha = rand_direction();
 		vec3 initd = get_random_vector();
 
 		head.direction = initd;
@@ -171,10 +184,12 @@ public:
 			if (elapsed_direction_change_timestamp > auto_direction_change_period)
 			{
 				elapsed_direction_change_timestamp = 0;
-				head.direction = get_random_vector();
-				auto_direction_change_period = randf(2.f, 4.f);
+				//head.direction = get_restricted_vector(head.direction, randf(MIN_DIRECTION_CHANGE, MAX_DIRECTION_CHANGE));
+				auto_direction_change_period = AUTO_DIRECTION_CHANGE_PERIOD_KEYWORD;
+				decided_direction = get_random_vector();
 				gld.add("Worm[UID: " + UID + "] changed its direction");
 			}
+			head.direction += (decided_direction - head.direction) * 0.01f;
 			head.update_and_move(head.direction + head.pos, move_dist);
 		}
 	}

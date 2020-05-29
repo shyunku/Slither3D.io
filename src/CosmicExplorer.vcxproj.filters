@@ -93,6 +93,12 @@
     <ClInclude Include="command.hpp">
       <Filter>Header Files\user_libraries\managers</Filter>
     </ClInclude>
+    <ClInclude Include="worm.hpp">
+      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
+    </ClInclude>
+    <ClInclude Include="world_border.hpp">
+      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

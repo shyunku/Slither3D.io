@@ -78,7 +78,7 @@ void command_listener()
 
 void execute_command(CommandParser command_parser)
 {
-	extern Player player;
+	extern Player* player;
 
 	string keyword = command_parser.get_command_keyword();
 	size_t words = command_parser.get_segment_size_except_keyword();
@@ -90,24 +90,24 @@ void execute_command(CommandParser command_parser)
 		logger("example) /look 0 0 5");
 		return;
 	}
-	else if (!keyword.compare("tp"))
-	{
-		if (words != 3)
-		{
-			logger("Invalid parameter. usage: /tp <x> <y> <z>");
-			return;
-		}
-		
-		vec3 orig = player.pos;
+	//else if (!keyword.compare("tp"))
+	//{
+	//	if (words != 3)
+	//	{
+	//		logger("Invalid parameter. usage: /tp <x> <y> <z>");
+	//		return;
+	//	}
+	//	
+	//	vec3 orig = player->pos;
 
-		float xf = stof(command_parser.get_segment(0));
-		float yf = stof(command_parser.get_segment(1));
-		float zf = stof(command_parser.get_segment(2));
+	//	float xf = stof(command_parser.get_segment(0));
+	//	float yf = stof(command_parser.get_segment(1));
+	//	float zf = stof(command_parser.get_segment(2));
 
-		player.pos = vec3(xf, yf, zf);
-		logger("Teleported to %d, %d, %d to %d, %d, %d", (int)orig.x, (int)orig.y, (int)orig.z, (int)xf, (int)yf, (int)zf);
-		return;
-	}
+	//	player->pos = vec3(xf, yf, zf);
+	//	logger("Teleported to %d, %d, %d to %d, %d, %d", (int)orig.x, (int)orig.y, (int)orig.z, (int)xf, (int)yf, (int)zf);
+	//	return;
+	//}
 	else if (!keyword.compare("look"))
 	{
 		if (words != 3)
@@ -120,7 +120,7 @@ void execute_command(CommandParser command_parser)
 		float yf = stof(command_parser.get_segment(1));
 		float zf = stof(command_parser.get_segment(2));
 
-		player.camera.set_looking_at(vec3(xf, yf, zf));
+		player->camera.set_looking_at(vec3(xf, yf, zf));
 		logger("Now looking at %.2f, %.2f, %.2f ", xf, yf, zf);
 		return;
 	}
@@ -130,11 +130,11 @@ void execute_command(CommandParser command_parser)
 		{
 			if (!keyword.compare("fix"))
 			{
-				player.set_fix(true);
+				player->set_fix(true);
 				logger("Player position fixed.");
 				return;
 			}
-			player.set_fix(false);
+			player->set_fix(false);
 			logger("Player position unfixed.");
 			return;
 		}
@@ -142,13 +142,13 @@ void execute_command(CommandParser command_parser)
 		{
 			if (!command_parser.get_segment(0).compare("true"))
 			{
-				player.set_fix(true);
+				player->set_fix(true);
 				logger("Player position fixed.");
 				return;
 			}
 			else if (!command_parser.get_segment(0).compare("false"))
 			{
-				player.set_fix(false);
+				player->set_fix(false);
 				logger("Player position unfixed.");
 				return;
 			}
@@ -158,6 +158,15 @@ void execute_command(CommandParser command_parser)
 			logger("Invalid parameter. usage: /fix <Boolean> or /fix");
 			return;
 		}
+	}
+	else if (!keyword.compare("setspeed"))
+	{
+		if (words != 1)
+		{
+			return;
+		}
+		player->set_speed(stof(command_parser.get_segment(0)));
+		return;
 	}
 
 	cout << "No command keyword for '" << keyword << "'" << endl;

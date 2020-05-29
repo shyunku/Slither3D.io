@@ -358,6 +358,10 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# Mac
 cmake-build-debug/
 CMakeLists.txt
 .idea/
+
+# Window addition
+*.exe

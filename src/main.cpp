@@ -1,4 +1,3 @@
-#include "global_constants.hpp"
 #include "control.hpp"
 #include "game_moderator.hpp"
 #include "camera.hpp"
@@ -26,7 +25,7 @@ GLuint							default_program;
 GLuint							text_program;
 
 /* --------------------------- Scene Objects  --------------------------- */
-Player							player = Player();
+Player*							player = NULL;
 
 /* --------------------------- Vertex Properties  --------------------------- */
 ObjectVertexProperty			sphere_vertex_property;
@@ -38,7 +37,7 @@ void update()
 	static float last_update_flag = 0;
 
 	// Update Camera property
-	set_main_camera(player.camera);
+	set_main_camera(player->camera);
 
 	// Update time
 	elapsed_time = float(glfwGetTime());
@@ -46,12 +45,14 @@ void update()
 	last_update_flag = elapsed_time;
 
 	// Update Objects
-	player.update();
+	player->update(time_tick);
 	//if (keypress_tracker.KEY_W)
 	//{
 
 	//}
 	game_moderator.update(time_tick);
+
+	Sleep((int)(1000.f / FPS_LIMIT));
 }
 
 void render()
@@ -59,15 +60,20 @@ void render()
 	// Clear screen and clear depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
 
+	float fFPS = 1.f / time_tick;
 	draw_string("FrameCount: "+to_string(frame_count), 20, 20, 0.3f, ucol::white);
 	draw_string(format_string("Elapsed time: %.2fs", elapsed_time), 20, 35, 0.3f, ucol::white);
 	draw_string(format_string("Update time tick: %.4fs", time_tick), 20, 50, 0.3f, ucol::white);
-	draw_string(format_string("FPS: %d", int(1/time_tick)), 20, 65, 0.3f, ucol::white);
-	draw_string(format_string("Camera Pos: (%.2f,%.2f,%.2f)", player.pos.x, player.pos.y, player.pos.z), 20, 80, 0.3f, ucol::white);
-	draw_string(format_string("Camera Direction: (%.2f,%.2f,%.2f)", player.camera.look_direction.x, player.camera.look_direction.y, player.camera.look_direction.z),
+	draw_string(format_string("FPS: %d", int(fFPS)), 20, 65, 0.3f, ucol::white);
+
+	vec3 player_pos = player->get_pos();
+	draw_string(format_string("Head Pos: (%.7f,%.7f,%.7f)", player_pos.x, player_pos.y, player_pos.z), 20, 80, 0.3f, ucol::white);
+	draw_string(format_string("Camera Direction: (%.2f,%.2f,%.2f)", player->camera.look_direction.x, player->camera.look_direction.y, player->camera.look_direction.z),
 		20, 95, 0.3f, ucol::white);
-	draw_string(format_string("Camera Up: (%.2f,%.2f,%.2f)", player.camera.up.x, player.camera.up.y, player.camera.up.z),
+	draw_string(format_string("Camera Up: (%.2f,%.2f,%.2f)", player->camera.up.x, player->camera.up.y, player->camera.up.z),
 		20, 110, 0.3f, ucol::white);
+
+	//draw_string(format_string("Player speed: %.3f", player->velocity * fFPS), 20, 140, 0.3f, ucol::white);
 
 	// Render Objects
 	game_moderator.render();
@@ -93,6 +99,8 @@ void initialize_environment()
 	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	// EventListener Setting
 	glfwSetWindowSizeCallback(window, window_reshape_listener);
 	glfwSetMouseButtonCallback(window, mouse_click_event_listener);
@@ -109,6 +117,8 @@ void initialize_environment()
 
 	// Game Moderator
 	game_moderator = GameModerator(sphere_vertex_property, circle_vertex_property);
+
+	player = new Player(game_moderator.ingame_object_manager.get_player());
 
 	// Initial User Action
 	print_version_of_app();

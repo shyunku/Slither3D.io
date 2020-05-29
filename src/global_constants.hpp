@@ -13,11 +13,16 @@ static const char*				font_path = "../bin/resources/fonts/consola.ttf";
 static const char*				text_frag_path = "shaders/text/text.frag";
 static const char*				text_vert_path = "shaders/text/text.vert";
 
-static const std::string		app_name = "CosmicExplorer";
-static const std::string		version_str = "0.1.0v";
+static const std::string		app_name = "Slither3D.io";
+static const std::string		version_str = "0.1.1v";
+
+static const uint				FPS_LIMIT = 144;
 
 /* --------------------------- Constant Colors  --------------------------- */
 namespace ucol
 {
-	vec4 white = vec4(1.f, 1.f, 1.f, 1.f);
+	static const vec4 white = vec4(1.f, 1.f, 1.f, 1.f);
 }
+
+/* --------------------------- Constant Ingame  --------------------------- */
+const float						WORLD_BORDER_RADIUS = 1000.f;

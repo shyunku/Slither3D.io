@@ -1,34 +1,41 @@
 #pragma once
 #include "cgmath.h"
 #include "camera.hpp"
-
-extern void print_vec3(vec3 v);
-extern void print_vec3(vec3 v, const char* msg);
+#include "worm.hpp"
 
 typedef class player_
 {
 private:
-	float		default_velocity = 0.0005f;
+	const float	LOOK_DISTANCE = 20.f;
 	bool		fixed = true;
-	inline void update_pos()
+	inline void update_pos(float time_tick)
 	{
-		if (fixed) return;
-		pos += camera.look_direction.normalize() * default_velocity;
+		//if (fixed) return;
+		//pos += camera.look_direction.normalize() * velocity * time_tick;
 	}
 public:
-	vec3		pos = vec3(0, 4, 12);
-	vec3		direction = vec3(0, 0, -1);
+	Worm*		me = NULL;
 	Camera		camera;
-	player_()
+	player_() {}
+	player_(Worm* me)
 	{
+		this->me = me;
 	}
-	inline void update()
+	inline void update(float time_tick)
 	{
-		update_pos();
-		camera.update(pos);
+		update_pos(time_tick);
+		camera.update(me->head.pos - camera.look_direction * LOOK_DISTANCE);
 	}
 	inline void set_fix(bool fix)
 	{
 		fixed = fix;
+	}
+	inline void set_speed(float vel)
+	{
+		//velocity = vel;
+	}
+	inline vec3 get_pos()
+	{
+		return me->head.pos;
 	}
 }Player;

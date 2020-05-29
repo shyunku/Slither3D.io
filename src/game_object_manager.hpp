@@ -2,6 +2,8 @@
 #include "celestial_objects.hpp"
 #include "objvert.hpp"
 #include "glutil.hpp"
+#include "worm.hpp"
+#include "world_border.hpp"
 
 using ovprop = ObjectVertexProperty;
 
@@ -11,52 +13,26 @@ private:
 	ObjectVertexProperty sphere_vertex_property;
 	ObjectVertexProperty circle_vertex_property;
 public:
-	vector<Star> stars;
+	//vector<Star> stars;
+	vector<Worm> worms;
+	WorldBorder world_border = WorldBorder();
+
 	in_game_object_manager_(){}
 	in_game_object_manager_(ovprop sphere_vertex_property, ovprop circle_vertex_property) 
 		: sphere_vertex_property(sphere_vertex_property), 
 		circle_vertex_property(circle_vertex_property)
 	{
-		// please modify this (this is for test)
-		Star sun = Star(SpinProperty(), 1.f, 1.f, "sun");
-		Planet pluto = Planet(
-			SpinProperty(),
-			RevolveProperty(1.4f, 0.2f, vec3(0, 1, 0), false),
-			0.03f, 0.f, "pluto"
-		);
-		Planet earth = Planet(
-			SpinProperty(),
-			RevolveProperty(2.f, 1.f, vec3(0, 1, 0), true), 
-			0.1f, 0.f, "earth"
-		);
-		Planet jupiter = Planet(
-			SpinProperty(),
-			RevolveProperty(4.5f, 4.6f, vec3(0, 1, 0), true),
-			0.4f, 0.f, "jupiter"
-		);
-		Planet uranus = Planet(
-			SpinProperty(),
-			RevolveProperty(13.f, 6.2f, vec3(0, 1, 0), true),
-			0.35f, 0.f, "uranus"
-		);
-		Planet neptune = Planet(
-			SpinProperty(),
-			RevolveProperty(27.f, 10.f, vec3(0, 1, 0), true),
-			0.2f, 0.f, "neptune"
-		);
-		Satelite moon = Satelite(
-			SpinProperty(),
-			RevolveProperty(0.25f, 0.6f, vec3(0, 1, 0), true),
-			0.02f, 0.f, "moon"
-		);
+		uint initial_worm_num = 20;
 
-		earth.add_satelite(moon);
-		sun.add_planet(earth);
-		sun.add_planet(pluto);
-		sun.add_planet(jupiter);
-		sun.add_planet(uranus);
-		sun.add_planet(neptune);
-		stars.push_back(sun);
+		for (uint i = 0; i < initial_worm_num - 1; i++)
+		{
+			Worm worm = Worm(15);
+			worms.push_back(worm);
+		}
+
+		Worm player_worm = Worm(15);
+		player_worm.make_player();
+		worms.push_back(player_worm);
 	}
 
 	void render_all()
@@ -65,26 +41,50 @@ public:
 
 		glUseProgram(default_program);
 
-		// Bind Sphere and render
 		glBindVertexArray(sphere_vertex_property.vertex_array_ID);
-		for (vector<Star>::iterator iter = stars.begin(); iter != stars.end(); ++iter)
+
+		// render world border
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		world_border.render_sphere(default_program, sphere_vertex_property.get_triangles_num());
+
+		// render stars
+		//for (vector<Star>::iterator iter = stars.begin(); iter != stars.end(); ++iter)
+		//{
+		//	iter->render_sphere(default_program, sphere_vertex_property.get_triangles_num());
+		//}
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		for (vector<Worm>::iterator iter = worms.begin(); iter != worms.end(); ++iter)
 		{
 			iter->render_sphere(default_program, sphere_vertex_property.get_triangles_num());
 		}
 
 		// Bind Orbit and render
-		glBindVertexArray(circle_vertex_property.vertex_array_ID);
-		for (vector<Star>::iterator iter = stars.begin(); iter != stars.end(); ++iter)
-		{
-			iter->render_orbit(default_program, circle_vertex_property.get_triangles_num(), true);
-		}
+		//glBindVertexArray(circle_vertex_property.vertex_array_ID);
+		//for (vector<Star>::iterator iter = stars.begin(); iter != stars.end(); ++iter)
+		//{
+		//	iter->render_orbit(default_program, circle_vertex_property.get_triangles_num(), true);
+		//}
 	}
 
 	void update_all(float time_tick)
 	{
-		for (vector<Star>::iterator iter = stars.begin(); iter != stars.end(); ++iter)
+		// update worms
+		for (vector<Worm>::iterator iter = worms.begin(); iter != worms.end(); ++iter)
 		{
-			iter->update(time_tick, vec3(), true);
+			iter->update(time_tick);
 		}
+	}
+
+	Worm* get_player()
+	{
+		for (vector<Worm>::iterator iter = worms.begin(); iter != worms.end(); ++iter)
+		{
+			if (iter->is_player)
+			{
+				return &(*iter);
+			}
+		}
+		return NULL;
 	}
 }InGameObjectManager;

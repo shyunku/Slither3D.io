@@ -20,14 +20,14 @@ void mouse_click_event_listener(GLFWwindow* window, int button, int action, int 
 		if (action == GLFW_PRESS)
 		{
 			dvec2 pos = get_glfw_get_cursor_position(window);
-			logger("Mouse Left Click: (" + to_string(pos.x) + ", " + to_string(pos.y) + ")");
+			//logger("Mouse Left Click: (" + to_string(pos.x) + ", " + to_string(pos.y) + ")");
 		}
 	}
 }
 
 void mouse_motion_event_listener(GLFWwindow* window, double x, double y)
 {
-	extern Player player;
+	extern Player* player;
 	static double last_x = 0;
 	static double last_y = 0;
 
@@ -37,7 +37,7 @@ void mouse_motion_event_listener(GLFWwindow* window, double x, double y)
 	last_x = x;
 	last_y = y;
 
-	player.camera.direction_adjust(x_diff, y_diff);
+	player->camera.direction_adjust(x_diff, y_diff);
 	//logger("Mouse Motion: (" + to_string(x_diff) + ", " + to_string(y_diff) + ")");
 }
 
@@ -45,6 +45,8 @@ void keyboard_event_listener(GLFWwindow* window, int key, int scancode, int acti
 {
 	static bool use_wireframe = false;
 	static bool use_mouselock = false;
+	static bool use_fullscreen = false;
+	static ivec2 original_window_size;
 	extern KeypressTracker keypress_tracker;
 
 	if (action == GLFW_PRESS)
@@ -73,6 +75,30 @@ void keyboard_event_listener(GLFWwindow* window, int key, int scancode, int acti
 			break;
 		case GLFW_KEY_D:
 			keypress_tracker.KEY_D = true;
+			break;
+		case GLFW_KEY_ENTER:
+			use_fullscreen = !use_fullscreen;
+			extern GLFWwindow* window;
+			extern ivec2 window_size;
+			const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+			if (use_fullscreen)
+			{
+				original_window_size = window_size;
+				
+				glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
+			}
+			else
+			{
+				glfwSetWindowMonitor(
+					window, 
+					NULL, 
+					mode->width/2 - original_window_size.x/2,
+					mode->height/2 - original_window_size.y/2,
+					original_window_size.x,
+					original_window_size.y,
+					GLFW_DONT_CARE);
+			}
 			break;
 		}
 	}

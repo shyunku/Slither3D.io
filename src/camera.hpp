@@ -1,12 +1,14 @@
 #pragma once
 #include "cgmath.h"		// slee's simple math library
 
+extern const float WORLD_BORDER_RADIUS;
+
 typedef class camera_
 {
 private:
 	const float		fov = PI / 4.0f;
 	const float		dNear = 1.0f;
-	const float		dFar = 1000.f;
+	const float		dFar = WORLD_BORDER_RADIUS * 3;
 	float			aspect_ratio;
 
 	inline void revalidate_all()

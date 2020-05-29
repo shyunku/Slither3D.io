@@ -200,3 +200,15 @@ void draw_string(string text, GLint _x, GLint _y, GLfloat scale, vec4 color)
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+float get_string_width(string str, float scale)
+{
+	float width = 0;
+	for (string::const_iterator c = str.begin(); c != str.end(); c++)
+	{
+		stbtt_char_t ch = stbtt_char_list[*c];
+		width += ch.advance * scale;
+	}
+	
+	return width;
+}

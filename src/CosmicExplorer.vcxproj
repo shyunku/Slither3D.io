@@ -137,6 +137,7 @@
     <ClInclude Include="global_constants.hpp" />
     <ClInclude Include="glutil.hpp" />
     <ClInclude Include="gl\glad\glad.h" />
+    <ClInclude Include="log_manager.hpp" />
     <ClInclude Include="objvert.hpp" />
     <ClInclude Include="celestial.hpp" />
     <ClInclude Include="celestial_objects.hpp" />
@@ -159,6 +160,9 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\consola.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="history.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

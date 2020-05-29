@@ -43,6 +43,9 @@
     <Filter Include="Resource Files\fonts">
       <UniqueIdentifier>{755a6eb1-b016-4bdd-8b56-93d327e0d1a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Communication">
+      <UniqueIdentifier>{331fdd4d-2ff6-4f99-a96a-6f30844e477d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cgmath.h">
@@ -99,6 +102,9 @@
     <ClInclude Include="world_border.hpp">
       <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
     </ClInclude>
+    <ClInclude Include="log_manager.hpp">
+      <Filter>Header Files\user_libraries\managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -129,5 +135,10 @@
     <Font Include="resources\fonts\consola.ttf">
       <Filter>Resource Files\fonts</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="history.txt">
+      <Filter>Communication</Filter>
+    </Text>
   </ItemGroup>
 </Project>

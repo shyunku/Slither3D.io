@@ -6,6 +6,7 @@
 #include "player.hpp"
 #include "text_manager.hpp"
 #include "command.hpp"
+#include "log_manager.hpp"
 
 
 /* --------------------------- Global Objects  --------------------------- */
@@ -19,6 +20,12 @@ ivec3							background_color = ivec3(0);
 
 GameModerator					game_moderator;
 KeypressTracker					keypress_tracker;
+
+AppInfoDrawer					aid;
+StaticValueDrawer				svd;
+CommandFrameDrawer				cfd;
+GameLogDrawer					gld;
+
 
 /* --------------------------- Global Shader Programs  --------------------------- */
 GLuint							default_program;
@@ -61,19 +68,17 @@ void render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
 
 	float fFPS = 1.f / time_tick;
-	draw_string("FrameCount: "+to_string(frame_count), 20, 20, 0.3f, ucol::white);
-	draw_string(format_string("Elapsed time: %.2fs", elapsed_time), 20, 35, 0.3f, ucol::white);
-	draw_string(format_string("Update time tick: %.4fs", time_tick), 20, 50, 0.3f, ucol::white);
-	draw_string(format_string("FPS: %d", int(fFPS)), 20, 65, 0.3f, ucol::white);
 
-	vec3 player_pos = player->get_pos();
-	draw_string(format_string("Head Pos: (%.7f,%.7f,%.7f)", player_pos.x, player_pos.y, player_pos.z), 20, 80, 0.3f, ucol::white);
-	draw_string(format_string("Camera Direction: (%.2f,%.2f,%.2f)", player->camera.look_direction.x, player->camera.look_direction.y, player->camera.look_direction.z),
-		20, 95, 0.3f, ucol::white);
-	draw_string(format_string("Camera Up: (%.2f,%.2f,%.2f)", player->camera.up.x, player->camera.up.y, player->camera.up.z),
-		20, 110, 0.3f, ucol::white);
+	aid.draw(app_name + " " + version_str);
 
-	//draw_string(format_string("Player speed: %.3f", player->velocity * fFPS), 20, 140, 0.3f, ucol::white);
+	svd.draw("FrameCount: " + to_string(frame_count));
+	svd.draw(format_string("Elapsed time: %.2fs", elapsed_time));
+	svd.draw(format_string("Update time tick: %.4fs", time_tick));
+	svd.draw(format_string("FPS: %d", int(fFPS)));
+
+	// Clear Stacked Logs
+	aid.clear_stack();
+	svd.clear_stack();
 
 	// Render Objects
 	game_moderator.render();

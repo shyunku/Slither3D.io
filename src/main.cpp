@@ -80,6 +80,7 @@ void render()
 
 	// Game Event Log Panel
 	gld.draw_all();
+	cfd.draw_all();
 
 	// Clear Stacked Logs
 	aid.clear_stack();
@@ -116,6 +117,7 @@ void initialize_environment()
 	glfwSetMouseButtonCallback(window, mouse_click_event_listener);
 	glfwSetKeyCallback(window, keyboard_event_listener);
 	glfwSetCursorPosCallback(window, mouse_motion_event_listener);
+	glfwSetCharCallback(window, key_type_event_listener);
 
 	/* ------------------ User Method starts ------------------ */
 	// Text Setting
@@ -154,9 +156,6 @@ void main_process()
 int main(int argc, char* argv[])
 {
 	initialize_environment();
-
-	// Create thread for input command
-	thread command_thread(&command_listener);
 
 	main_process();
 

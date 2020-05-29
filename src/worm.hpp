@@ -187,7 +187,7 @@ public:
 				//head.direction = get_restricted_vector(head.direction, randf(MIN_DIRECTION_CHANGE, MAX_DIRECTION_CHANGE));
 				auto_direction_change_period = AUTO_DIRECTION_CHANGE_PERIOD_KEYWORD;
 				decided_direction = get_random_vector();
-				gld.add("Worm[UID: " + UID + "] changed its direction");
+				//gld.add("Worm[UID: " + UID + "] changed its direction");
 			}
 			head.direction += (decided_direction - head.direction) * 0.01f;
 			head.update_and_move(head.direction + head.pos, move_dist);

@@ -41,15 +41,50 @@ void mouse_motion_event_listener(GLFWwindow* window, double x, double y)
 	//logger("Mouse Motion: (" + to_string(x_diff) + ", " + to_string(y_diff) + ")");
 }
 
+void key_type_event_listener(GLFWwindow* window, GLuint codepoint)
+{
+	extern CommandFrameDrawer cfd;
+	if (cfd.listener_switch)
+	{
+		cfd.append(char(codepoint));
+	}
+}
+
 void keyboard_event_listener(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	static bool use_wireframe = false;
 	static bool use_mouselock = false;
-	static bool use_fullscreen = false;
+	static bool use_fullscreen = false;	
+
 	static ivec2 original_window_size;
 	extern KeypressTracker keypress_tracker;
+	extern CommandFrameDrawer cfd;
 
-	if (action == GLFW_PRESS)
+	if (cfd.listener_switch)
+	{
+		extern CommandFrameDrawer cfd;
+		
+		if (action == GLFW_PRESS)
+		{
+			switch (key)
+			{
+			case GLFW_KEY_ENTER:		// disable command_mode
+				cfd.complete();
+				break;
+			case GLFW_KEY_ESCAPE:
+				cfd.cancel();
+				break;
+			case GLFW_KEY_BACKSPACE:
+				cfd.backspace();
+				break;
+			}
+		}
+	}
+	else if (key == GLFW_KEY_SLASH && action == GLFW_PRESS)
+	{
+		cfd.activate();
+	}
+	else if (action == GLFW_PRESS)
 	{
 		switch (key)
 		{
@@ -76,8 +111,11 @@ void keyboard_event_listener(GLFWwindow* window, int key, int scancode, int acti
 		case GLFW_KEY_D:
 			keypress_tracker.KEY_D = true;
 			break;
-		case GLFW_KEY_ENTER:
+		case GLFW_KEY_F11:
 			use_fullscreen = !use_fullscreen;
+			use_mouselock = use_fullscreen;
+			glfwSetInputMode(window, GLFW_CURSOR, use_mouselock ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+
 			extern GLFWwindow* window;
 			extern ivec2 window_size;
 			const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());

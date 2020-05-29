@@ -22,7 +22,7 @@ public:
 		: sphere_vertex_property(sphere_vertex_property), 
 		circle_vertex_property(circle_vertex_property)
 	{
-		uint initial_worm_num = 25;
+		uint initial_worm_num = 125;
 
 		for (uint i = 0; i < initial_worm_num - 1; i++)
 		{
@@ -45,6 +45,7 @@ public:
 
 		// render world border
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDisable(GL_CULL_FACE);
 		world_border.render_sphere(default_program, sphere_vertex_property.get_triangles_num());
 
 		// render stars
@@ -54,6 +55,7 @@ public:
 		//}
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_CULL_FACE);
 		for (vector<Worm>::iterator iter = worms.begin(); iter != worms.end(); ++iter)
 		{
 			iter->render_sphere(default_program, sphere_vertex_property.get_triangles_num());

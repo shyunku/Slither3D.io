@@ -25,6 +25,22 @@ inline float distancef(vec3 v1, vec3 v2)
 	return (v1 - v2).length();
 }
 
+inline float refinef(float f)
+{
+	if (f > 1)
+	{
+		return 1.f;
+	}
+	else if (f < 0)
+	{
+		return 0.f;
+	}
+	else
+	{
+		return f;
+	}
+}
+
 string format_string(const string fmt, ...)
 {
 	int size = ((int)fmt.size()) * 2;

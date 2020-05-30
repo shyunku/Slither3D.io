@@ -15,8 +15,11 @@ void mouse_click_event_listener(GLFWwindow* window, int button, int action, int 
 	{
 		if (action == GLFW_PRESS)
 		{
-			dvec2 pos = get_glfw_get_cursor_position(window);
-			//logger("Mouse Left Click: (" + to_string(pos.x) + ", " + to_string(pos.y) + ")");
+			player->me->boosting = true;
+		}
+		else if(action == GLFW_RELEASE)
+		{
+			player->me->boosting = false;
 		}
 	}
 }

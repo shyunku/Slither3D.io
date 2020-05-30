@@ -30,7 +30,7 @@ public:
 	float amount;
 	prey_()
 	{
-		float virtual_rad = randf(0, WORLD_BORDER_RADIUS - BORDER_PADDING_ARRANGE_OFFSET);
+		float virtual_rad = cbrt(randf(0,1)) * (WORLD_BORDER_RADIUS - BORDER_PADDING_ARRANGE_OFFSET);
 		vec3 rand_vec = get_random_vector();
 
 		pos = virtual_rad * rand_vec;

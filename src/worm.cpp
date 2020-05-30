@@ -103,7 +103,7 @@ void Worm::update_body(float time_tick)
 
 	// revalidate children pos
 
-	head.move(time_tick * speed);
+	head.move(time_tick * speed * (boosting ? BOOST_SPEED_FACTOR : 1));
 	for (vector<WormBody>::iterator iter = body.begin(); iter < body.end(); ++iter)
 	{
 		WormBody parent = iter == body.begin() ? head : *(iter - 1);

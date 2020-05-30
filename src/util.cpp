@@ -47,9 +47,9 @@ inline float refinef(float f)
 
 vec3 get_random_vector()
 {
-	float theta = randf(0, 2 * PI);
-	float alpha = randf(0, 2 * PI);
-	return vec3(cos(theta) * cos(alpha), sin(theta) * cos(alpha), sin(alpha)).normalize();
+	float theta = randf(0, 1) * 2 * PI;
+	float alpha = randf(0, 1) * 2 * PI;
+	return vec3(cosf(theta) * cosf(alpha), sinf(theta) * cosf(alpha), sin(alpha)).normalize();
 }
 
 string format_string(const string fmt, ...)

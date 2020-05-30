@@ -29,8 +29,9 @@ private:
 	const float			MAX_DIRECTION_CHANGE = PI / 2;
 	const float			AVOID_WALL_START_RANGE = WORLD_BORDER_RADIUS * 3 / 4;
 
-	const float			DEFAULT_SPEED = 1.5f;
-	const float			MAX_SPEED = 20.f;
+	const float			DEFAULT_SPEED = 10.f;
+	const float			BOOST_SPEED_FACTOR = 2.f;
+	const float			MAX_SPEED = 200.f;
 	vec4				color;
 	string				UID;
 	vector<WormBody>	body;
@@ -42,21 +43,13 @@ public:
 	float				speed = DEFAULT_SPEED;
 	WormBody			head;
 	bool				is_player = false;
+	bool				boosting = false;
 	float				growth;
 
 	// AI area
 	float				auto_direction_change_period = 0;
 	float				elapsed_direction_change_timestamp = 0;
 	vec3				decided_direction = vec3(0);
-
-	/*
-		size(radius) √÷º“ 0.5
-		growth - size:
-		0 - 0.5
-		300 - 1.0
-		1000 - 1.5
-		0.5ln(x+200) - ln(sqrt(200)) + 0.5
-	*/
 
 	worm_();
 	worm_(float initial_growth);

@@ -30,21 +30,20 @@ GameLogDrawer					gld;
 /* --------------------------- Global Shader Programs  --------------------------- */
 GLuint							default_program;
 GLuint							text_program;
+GLuint							glow_program;
 
 /* --------------------------- Scene Objects  --------------------------- */
 Player*							player = NULL;
 
 /* --------------------------- Vertex Properties  --------------------------- */
-ObjectVertexProperty			sphere_vertex_property;
+ObjectVertexProperty			large_sphere_vertex_property;
+ObjectVertexProperty			small_sphere_vertex_property;
 ObjectVertexProperty			circle_vertex_property;
 
 
 void update()
 {
 	static float last_update_flag = 0;
-
-	// Update Camera property
-	set_main_camera(player->camera);
 
 	// Update time
 	elapsed_time = float(glfwGetTime());
@@ -102,6 +101,7 @@ void initialize_environment()
 	
 	// Shader Setting
 	default_program = create_shader_program("default");
+	glow_program = create_shader_program("glow");
 
 	// GL State Setting
 	set_gl_background_color(background_color);
@@ -124,13 +124,15 @@ void initialize_environment()
 	text_initial_setting();
 
 	// Vertex Property Setting
-	sphere_vertex_property = create_sphere_vertex_property();
+	large_sphere_vertex_property = create_large_sphere_vertex_property();
+	small_sphere_vertex_property = create_small_sphere_vertex_property();
 	circle_vertex_property = create_circle_vertex_property();
 
 	// Game Moderator
-	game_moderator = GameModerator(sphere_vertex_property, circle_vertex_property);
+	game_moderator = GameModerator(large_sphere_vertex_property, small_sphere_vertex_property, circle_vertex_property);
 
 	player = new Player(game_moderator.ingame_object_manager.get_player());
+
 
 	// Initial User Action
 	print_version_of_app();

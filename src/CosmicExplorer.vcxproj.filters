@@ -46,6 +46,9 @@
     <Filter Include="Communication">
       <UniqueIdentifier>{331fdd4d-2ff6-4f99-a96a-6f30844e477d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader Files\glow">
+      <UniqueIdentifier>{93c3de9d-9285-48f6-aaf7-cfa47d5a8203}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cgmath.h">
@@ -105,6 +108,9 @@
     <ClInclude Include="log_manager.hpp">
       <Filter>Header Files\user_libraries\managers</Filter>
     </ClInclude>
+    <ClInclude Include="prey.hpp">
+      <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -129,6 +135,12 @@
     </None>
     <None Include="..\bin\shaders\default\default.vert">
       <Filter>Shader Files\default</Filter>
+    </None>
+    <None Include="..\bin\shaders\glow\glow.frag">
+      <Filter>Shader Files\glow</Filter>
+    </None>
+    <None Include="..\bin\shaders\glow\glow.vert">
+      <Filter>Shader Files\glow</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

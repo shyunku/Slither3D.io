@@ -141,6 +141,7 @@
     <ClInclude Include="objvert.hpp" />
     <ClInclude Include="celestial.hpp" />
     <ClInclude Include="celestial_objects.hpp" />
+    <ClInclude Include="prey.hpp" />
     <ClInclude Include="stb_truetype.h" />
     <ClInclude Include="text_manager.hpp" />
     <ClInclude Include="util.hpp" />
@@ -155,6 +156,8 @@
   <ItemGroup>
     <None Include="..\bin\shaders\default\default.frag" />
     <None Include="..\bin\shaders\default\default.vert" />
+    <None Include="..\bin\shaders\glow\glow.frag" />
+    <None Include="..\bin\shaders\glow\glow.vert" />
     <None Include="..\bin\shaders\text\text.frag" />
     <None Include="..\bin\shaders\text\text.vert" />
   </ItemGroup>

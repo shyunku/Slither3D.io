@@ -18,12 +18,12 @@ public:
 	InGameObjectManager		ingame_object_manager;
 
 	game_moderator_(){}
-	game_moderator_(ovprop sphere_vertex_property, ovprop circle_vertex_property)
+	game_moderator_(ovprop large_sphere_vertex_property, ovprop small_sphere_vertex_property,  ovprop circle_vertex_property)
 	{
 		curr_game_mode = FREE_MODE;
 		curr_game_status = SUSPENDING;
 		curr_game_focus_pos = MAIN_MENU;
-		ingame_object_manager = InGameObjectManager(sphere_vertex_property, circle_vertex_property);
+		ingame_object_manager = InGameObjectManager(large_sphere_vertex_property, small_sphere_vertex_property, circle_vertex_property);
 	}
 	void update(float time_tick)
 	{

@@ -15,6 +15,7 @@ extern const float WORLD_BORDER_RADIUS;
 extern void print_vec3(vec3 v);
 extern string format_string(const string fmt, ...);
 extern string get_vec3_string(vec3 v);
+extern vec3 get_random_vector();
 
 typedef class worm_body_
 {
@@ -89,12 +90,6 @@ private:
 
 			glDrawElements(GL_TRIANGLES, sphere_triangles, GL_UNSIGNED_INT, nullptr);
 		}
-	}
-	vec3 get_random_vector()
-	{
-		float theta = randf(0, 2 * PI);
-		float alpha = randf(0, 2 * PI);
-		return vec3(cos(theta) * cos(alpha), sin(theta) * cos(alpha), sin(alpha)).normalize();
 	}
 	vec3 get_restricted_vector(vec3 original, float max_difference)
 	{

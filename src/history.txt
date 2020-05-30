@@ -15,10 +15,10 @@ Necessary
 - worm의 마지막 child body를 growth rate에 대해 제대로 배치할 것
 - 지렁이 움직임 '더' 개선
 - Enemy Worm AI
-	- 부스트 AI
 	- 공격 AI
 	- 방어 AI
 	- 벽 기피 AI
+	- 먹이 먹는 AI + 부스트 AI
 - Player Worm Control
 	- 카메라 방향대로 움직이게 할 것
 	- 부스트

@@ -49,6 +49,9 @@
     <Filter Include="Shader Files\glow">
       <UniqueIdentifier>{93c3de9d-9285-48f6-aaf7-cfa47d5a8203}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\declaration">
+      <UniqueIdentifier>{1feb05fb-b6a4-4da5-9d88-00de90c2928f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cgmath.h">
@@ -68,9 +71,6 @@
     </ClInclude>
     <ClInclude Include="game_moderator.hpp">
       <Filter>Header Files\user_libraries\managers</Filter>
-    </ClInclude>
-    <ClInclude Include="global_constants.hpp">
-      <Filter>Header Files\user_libraries\global</Filter>
     </ClInclude>
     <ClInclude Include="util.hpp">
       <Filter>Header Files\user_libraries\global</Filter>
@@ -111,6 +111,9 @@
     <ClInclude Include="prey.hpp">
       <Filter>Header Files\user_libraries\objects\sphere_shape</Filter>
     </ClInclude>
+    <ClInclude Include="player.hpp">
+      <Filter>Header Files\user_libraries\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -119,8 +122,26 @@
     <ClCompile Include="gl\glad\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="player.hpp">
-      <Filter>Header Files\user_libraries\objects</Filter>
+    <ClCompile Include="player.cpp">
+      <Filter>Source Files\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="log_manager.cpp">
+      <Filter>Source Files\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="worm.cpp">
+      <Filter>Source Files\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="control.cpp">
+      <Filter>Source Files\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>Source Files\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="glutil.cpp">
+      <Filter>Source Files\declaration</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

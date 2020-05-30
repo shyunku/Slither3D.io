@@ -1,5 +1,4 @@
 #pragma once
-#include "global_constants.hpp"
 #include "cgmath.h"
 #include "cgut.h"
 #define STB_TRUETYPE_IMPLEMENTATION
@@ -12,6 +11,9 @@
 using namespace std;
 
 extern GLuint text_program;
+extern const char* font_path;
+extern const char* text_frag_path;
+extern const char* text_vert_path;
 
 struct stbtt_char_t
 {

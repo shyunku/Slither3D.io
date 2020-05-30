@@ -134,7 +134,6 @@
     <ClInclude Include="control.hpp" />
     <ClInclude Include="game_moderator.hpp" />
     <ClInclude Include="game_object_manager.hpp" />
-    <ClInclude Include="global_constants.hpp" />
     <ClInclude Include="glutil.hpp" />
     <ClInclude Include="gl\glad\glad.h" />
     <ClInclude Include="log_manager.hpp" />
@@ -147,11 +146,18 @@
     <ClInclude Include="util.hpp" />
     <ClInclude Include="world_border.hpp" />
     <ClInclude Include="worm.hpp" />
+    <ClInclude Include="player.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="control.cpp" />
+    <ClCompile Include="glutil.cpp" />
+    <ClCompile Include="log_manager.cpp" />
+    <ClCompile Include="player.cpp" />
     <ClCompile Include="gl\glad\glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="player.hpp" />
+    <ClCompile Include="util.cpp" />
+    <ClCompile Include="worm.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\shaders\default\default.frag" />

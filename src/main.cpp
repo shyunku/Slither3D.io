@@ -6,8 +6,40 @@
 #include "player.hpp"
 #include "text_manager.hpp"
 #include "command.hpp"
-#include "log_manager.hpp"
 
+/* Constants*/
+
+/* --------------------------- Constant Strings  --------------------------- */
+const char* root_path_str = "../bin/";
+const char* default_frag_path = "shaders/default/default.frag";
+const char* default_vert_path = "shaders/default/default.vert";
+
+const char* font_path = "../bin/resources/fonts/consola.ttf";
+const char* text_frag_path = "shaders/text/text.frag";
+const char* text_vert_path = "shaders/text/text.vert";
+
+const std::string		app_name = "Slither3D.io";
+const std::string		version_str = "0.2.4v_t0 - Beta";
+
+const uint				FPS_LIMIT = 144;
+
+/* --------------------------- Constant Colors  --------------------------- */
+
+const vec4 white = vec4(1.f, 1.f, 1.f, 1.f);
+const vec4 red = vec4(1.f, 0.f, 0.f, 1.f);
+
+const vec4 light_red = vec4(1.f, 0.3f, 0.3f, 1.f);
+
+const vec4 standard_log = vec4(1.f, 1.f, 1.f, 0.7f);
+const vec4 event_log = vec4(1.f, 0.9f, 0.6f, 0.7f);
+
+const vec4 console_verbose = vec4(.7f, .7f, .7f, 1.f);
+const vec4 console_warning = vec4(.9f, .9f, .5f, 1.f);
+const vec4 console_error = vec4(1.f, .4f, .4f, 1.f);
+const vec4 console_highlighted = vec4(.5f, .9f, 1.f, 1.f);
+
+/* --------------------------- Constant Ingame  --------------------------- */
+const float						WORLD_BORDER_RADIUS = 1000.f;
 
 /* --------------------------- Global Objects  --------------------------- */
 GLFWwindow*						window = nullptr;
@@ -98,7 +130,7 @@ void render()
 void initialize_environment()
 {
 	// Generate Window
-	window = cg_create_window(window_name, window_size.x, window_size.y);	
+	window = cg_create_window(app_name.c_str(), window_size.x, window_size.y);	
 	if (!window) terminate_with_code(1);
 	if (!cg_init_extensions(window)) terminate_with_code(2);
 	

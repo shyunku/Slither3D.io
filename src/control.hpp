@@ -76,6 +76,12 @@ void keyboard_event_listener(GLFWwindow* window, int key, int scancode, int acti
 			case GLFW_KEY_BACKSPACE:
 				console.backspace();
 				break;
+			case GLFW_KEY_UP:
+				console.seek_command_history(true);
+				break;
+			case GLFW_KEY_DOWN:
+				console.seek_command_history(false);
+				break;
 			}
 		}
 	}

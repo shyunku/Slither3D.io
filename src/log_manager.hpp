@@ -151,6 +151,44 @@ public:
 }StaticValueLogger;
 
 /*
+	Display Game Event Log
+	Bottom Right Log Panel
+*/
+typedef class game_log_drawer_ : public ReversedHistoryLogManager
+{
+private:
+	const uint MAX_LOG_LIMIT = 30;
+	const uint LINE_GAP_HEIGHT = 15;
+	vector<string> log_history;
+public:
+	game_log_drawer_() : reversed_history_log_manager_() {}
+	virtual inline void draw_all()
+	{
+		extern ivec2 window_size;
+		int display_log_limit = window_size.y / 50;
+		for (int i = log_history.size() - 1, j = 0; i >= 0 && j < display_log_limit; i--, j++)
+		{
+			string current_str = log_history.at(i);
+			draw_string(
+				current_str,
+				(GLint)(window_size.x - X_MIN_OFFSET - get_string_width(current_str, text_size)),
+				window_size.y - Y_MIN_OFFSET - LINE_GAP_HEIGHT * j,
+				text_size,
+				ucol::event_log
+			);
+		}
+	}
+	inline void add(string str)
+	{
+		log_history.push_back(get_current_time_string() + " " + str);
+		if (log_history.size() > MAX_LOG_LIMIT)
+		{
+			log_history.erase(log_history.begin());
+		}
+	}
+}GameEventLogger;
+
+/*
 	Display Command History or console
 	Bottom Left Log Panel
 */
@@ -162,96 +200,21 @@ private:
 	string command_builder = "";
 	CommandParser command_parser = CommandParser();
 	vector<SystemAnnounceLog> announcements;
-public:
-	bool listener_switch = false;
+	vector<string> command_history;
+	string current_command_save = "";
+	uint history_cursor = -1;	// -1 indiciates current_command
 
-	command_virtual_window_drawer_() : reversed_history_log_manager_() 
-	{
-		text_size = 0.4f;
-	}
-	virtual inline void draw_all()
-	{
-		extern ivec2 window_size;
-		// Console Contents
-		int display_log_limit = window_size.y / 70;
-
-		if (listener_switch)
-		{
-			// Current command on console
-			draw_string
-			(
-				command_builder,
-				X_MIN_OFFSET,
-				window_size.y - Y_MIN_OFFSET,
-				text_size,
-				ucol::white
-			);
-		}
-		
-		for (int i = announcements.size() - 1, j = 0; i >= 0 && j <= display_log_limit; i--, j++)
-		{
-			SystemAnnounceLog announcement = announcements.at(i);
-			if (!listener_switch && announcement.is_expired())continue;
-			draw_string
-			(
-				announcement.content,
-				X_MIN_OFFSET,
-				window_size.y - Y_MIN_OFFSET - LINE_GAP_HEIGHT * j - CONSOLE_Y_OFFSET,
-				text_size,
-				announcement.get_color_style(listener_switch)
-			);
-		}
-	}
-	void add(string content, SystemAnnounceLevel level)
-	{
-		announcements.push_back(SystemAnnounceLog(level, content));
-	}
-	void remove_expired()
-	{
-		for (vector<SystemAnnounceLog>::iterator iter = announcements.begin(); iter != announcements.end();)
-		{
-			if (iter->is_expired())
-			{
-				announcements.erase(iter);
-			}
-			else
-			{
-				iter++;
-			}
-		}
-	}
-	void activate()
-	{
-		listener_switch = true;
-	}
-	void complete()
-	{
-		string completed = command_builder;
-		flush();
-		listener_switch = false;
-
-		if (!completed.empty() && completed.at(0) == '/')
-		{
-			command_parser.accept(completed);
-			execute_command();
-		}
-	}
-	void cancel()
-	{
-		flush();
-		listener_switch = false;
-	}
-	void append(char c)
-	{
-		command_builder.push_back(c);
-	}
-	void backspace()
-	{
-		command_builder.pop_back();
-	}
 	void flush()
 	{
 		command_builder.clear();
+	}
+	void fetch_command_from_history()
+	{
+		command_builder = history_cursor == -1 ? current_command_save : command_history.at(history_cursor);
+	}
+	void init_command_history_seeker()
+	{
+		history_cursor = -1;
 	}
 	void execute_command()
 	{
@@ -345,43 +308,133 @@ public:
 		add("No command keyword for '" + keyword + "'", _WARNING_);
 		add("Try /help or /h to see how to use.", _HIGHLIGHTED_);
 	}
-}CommandConsole;
-
-
-/*
-	Display Game Event Log
-	Bottom Right Log Panel
-*/
-typedef class game_log_drawer_ : public ReversedHistoryLogManager
-{
-private:
-	const uint MAX_LOG_LIMIT = 30;
-	const uint LINE_GAP_HEIGHT = 15;
-	vector<string> log_history;
 public:
-	game_log_drawer_() : reversed_history_log_manager_() {}
+	bool listener_switch = false;
+
+	command_virtual_window_drawer_() : reversed_history_log_manager_()
+	{
+		text_size = 0.4f;
+	}
 	virtual inline void draw_all()
 	{
 		extern ivec2 window_size;
-		int display_log_limit = window_size.y / 50;
-		for (int i = log_history.size() - 1, j = 0; i >= 0 && j < display_log_limit; i--, j++)
+		// Console Contents
+		int display_log_limit = window_size.y / 70;
+
+		if (listener_switch)
 		{
-			string current_str = log_history.at(i);
-			draw_string(
-				current_str,
-				(GLint)(window_size.x - X_MIN_OFFSET - get_string_width(current_str, text_size)),
-				window_size.y - Y_MIN_OFFSET - LINE_GAP_HEIGHT * j,
+			// Current command on console
+			draw_string
+			(
+				command_builder,
+				X_MIN_OFFSET,
+				window_size.y - Y_MIN_OFFSET,
 				text_size,
-				ucol::event_log
+				ucol::white
+			);
+		}
+
+		for (int i = announcements.size() - 1, j = 0; i >= 0 && j <= display_log_limit; i--, j++)
+		{
+			SystemAnnounceLog announcement = announcements.at(i);
+			if (!listener_switch && announcement.is_expired())continue;
+			draw_string
+			(
+				announcement.content,
+				X_MIN_OFFSET,
+				window_size.y - Y_MIN_OFFSET - LINE_GAP_HEIGHT * j - CONSOLE_Y_OFFSET,
+				text_size,
+				announcement.get_color_style(listener_switch)
 			);
 		}
 	}
-	inline void add(string str)
+	void add(string content, SystemAnnounceLevel level)
 	{
-		log_history.push_back(get_current_time_string() + " " + str);
-		if (log_history.size() > MAX_LOG_LIMIT)
+		announcements.push_back(SystemAnnounceLog(level, content));
+	}
+	void remove_expired()
+	{
+		for (vector<SystemAnnounceLog>::iterator iter = announcements.begin(); iter != announcements.end();)
 		{
-			log_history.erase(log_history.begin());
+			if (iter->is_expired())
+			{
+				announcements.erase(iter);
+			}
+			else
+			{
+				iter++;
+			}
 		}
 	}
-}GameEventLogger;
+	void activate()
+	{
+		listener_switch = true;
+	}
+	void complete()
+	{
+		string completed = command_builder;
+		flush();
+		listener_switch = false;
+
+		if (!completed.empty() && completed.at(0) == '/')
+		{
+			command_history.push_back(completed);
+			command_parser.accept(completed);
+			execute_command();
+		}
+		// non - command action (ex. chat?)
+
+		init_command_history_seeker();
+	}
+	void cancel()
+	{
+		flush();
+		listener_switch = false;
+		init_command_history_seeker();
+	}
+	void append(char c)
+	{
+		command_builder.push_back(c);
+	}
+	void backspace()
+	{
+		command_builder.pop_back();
+	}
+	void seek_command_history(bool seek_prev)
+	{
+		if (!listener_switch || command_history.empty())return;
+		if (seek_prev)
+		{
+			// seek up
+			if (history_cursor == -1)
+			{
+				// goto history
+				history_cursor = command_history.size() - 1;
+				current_command_save = command_builder;
+				fetch_command_from_history();
+			}
+			else if (history_cursor != 0)
+			{
+				// get prev command
+				history_cursor--;
+				fetch_command_from_history();
+			}
+		}
+		else
+		{
+			// seek down
+			if (history_cursor == command_history.size() - 1)
+			{
+				// return to current line
+				history_cursor = -1;
+				fetch_command_from_history();
+			}
+			else if(history_cursor != -1)
+			{
+				// get next command
+				history_cursor++;
+				fetch_command_from_history();
+			}
+		}
+	}
+}CommandConsole;

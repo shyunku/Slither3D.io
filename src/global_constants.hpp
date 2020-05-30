@@ -14,7 +14,7 @@ static const char*				text_frag_path = "shaders/text/text.frag";
 static const char*				text_vert_path = "shaders/text/text.vert";
 
 static const std::string		app_name = "Slither3D.io";
-static const std::string		version_str = "0.2.1v - Beta";
+static const std::string		version_str = "0.2.2v - Beta";
 
 static const uint				FPS_LIMIT = 144;
 

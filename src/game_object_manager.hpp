@@ -26,17 +26,17 @@ public:
 		small_sphere_vertex_property(small_sphere_vertex_propery),
 		circle_vertex_property(circle_vertex_property)
 	{
-		uint initial_worm_num = 5;
+		uint initial_worm_num = 50;
 		for (uint i = 0; i < initial_worm_num - 1; i++)
 		{
-			Worm worm = Worm(40);
+			Worm worm = Worm(1000);
 			worms.push_back(worm);
 		}
 		Worm player_worm = Worm(15);
 		player_worm.make_player();
 		worms.push_back(player_worm);
 
-		uint initial_prey_num = 1000;
+		uint initial_prey_num = 500;
 		for (uint i = 0; i < initial_prey_num; i++)
 		{
 			Prey prey = Prey();

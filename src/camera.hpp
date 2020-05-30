@@ -1,5 +1,6 @@
 #pragma once
 #include "cgmath.h"		// slee's simple math library
+#include "worm.hpp"
 
 extern const float WORLD_BORDER_RADIUS;
 
@@ -40,12 +41,13 @@ public:
 	{
 		this->projection_matrix = mat4::perspective(fov, aspect_ratio, dNear, dFar);
 	}
-	inline void direction_adjust(float x, float y)
+	inline void look_direction_adjust(float x, float y)
 	{
 		vec3 right = look_direction.cross(up).normalize();
 		view_matrix *= mat4::rotate(right, y * 0.001f) * mat4::rotate(vec3(0,1,0), x * 0.001f);
 		revalidate_all();
 	}
+	
 	inline void set_looking_at(vec3 look)
 	{
 		look_direction = look - eye;

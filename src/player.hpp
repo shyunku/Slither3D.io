@@ -8,11 +8,6 @@ typedef class player_
 private:
 	const float	LOOK_DISTANCE = 20.f;
 	bool		fixed = true;
-	inline void update_pos(float time_tick)
-	{
-		//if (fixed) return;
-		//pos += camera.look_direction.normalize() * velocity * time_tick;
-	}
 public:
 	Worm*		me = NULL;
 	Camera		camera;
@@ -23,7 +18,6 @@ public:
 	}
 	inline void update(float time_tick)
 	{
-		update_pos(time_tick);
 		camera.update(me->head.pos - camera.look_direction * LOOK_DISTANCE);
 	}
 	inline void set_fix(bool fix)
@@ -37,5 +31,9 @@ public:
 	inline vec3 get_pos()
 	{
 		return me->head.pos;
+	}
+	inline void set_move_direction()
+	{
+		me->head.direction = camera.look_direction.normalize();
 	}
 }Player;

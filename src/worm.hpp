@@ -43,10 +43,14 @@ public:
 			mat4::rotate(vec3(0, 1, 0), 0) *
 			mat4::scale(radius);
 	}
-	void update_and_move(vec3 prev_parent_pos, float move_distance)
+	void move(float move_dist)
 	{
-		direction = (prev_parent_pos - pos).normalize();
-		pos += direction * move_distance;
+		pos += direction * move_dist;
+	}
+	void track_parent(vec3 parent_pos, const float body_gap)
+	{
+		direction = (parent_pos - pos).normalize();
+		pos = parent_pos - direction * body_gap;
 	}
 }WormBody;
 
@@ -54,10 +58,13 @@ typedef class worm_
 {
 private:
 	const float			BODY_GAP = 0.6f;
+	const float			BODY_GROWTH = 50.f;
+	const float			MIN_BODY_LENGTH = 5;
 	const float			MIN_DIRECTION_CHANGE = PI / 4;
 	const float			MAX_DIRECTION_CHANGE = PI / 2;
 	vec4				color;
 	string				UID;
+	vector<WormBody>	body;
 	void render_head(GLuint shader_program, uint sphere_triangles)
 	{
 		GLint uloc;
@@ -100,57 +107,84 @@ private:
 		float virtual_random_angle = rand_direction();
 		return (co * original + so * (cosf(virtual_random_angle) * virtual_x_vector + sinf(virtual_random_angle) * virtual_y_vector)).normalize();
 	}
+	void update_body(float time_tick)
+	{
+		uint body_num = (uint)(MIN_BODY_LENGTH + growth / BODY_GROWTH);
+		int last_body_growth_rate = int(float(int(growth) % int(BODY_GROWTH)) / BODY_GROWTH);
+		body_num += last_body_growth_rate > 0;
+		uint cur_size = body.size();
+
+		if (body_num < cur_size)
+		{
+			body.resize(body_num);
+		}
+		else if(body_num > cur_size)
+		{
+			WormBody last_body = cur_size == 0 ? head : body.at(cur_size - 1);
+			uint count = 0;
+			while (body_num != body.size())
+			{
+				body.push_back(WormBody(last_body.pos - BODY_GAP * last_body.direction * (float)++count, last_body.direction));
+			}
+		}
+
+		// revalidate children pos
+
+		head.move(time_tick*speed);
+		for (vector<WormBody>::iterator iter = body.begin(); iter < body.end(); ++iter)
+		{
+			WormBody parent = iter == body.begin() ? head : *(iter - 1);
+			iter->track_parent(parent.pos, BODY_GAP);
+		}
+	}
 public:
 	float				speed = 5.f;
 	WormBody			head;
-	vector<WormBody>	body;
 	bool				is_player = false;
+	float				growth;
 
 	// AI area
 	float				auto_direction_change_period = AUTO_DIRECTION_CHANGE_PERIOD_KEYWORD;
 	float				elapsed_direction_change_timestamp = 0;
 	vec3				decided_direction = vec3(0);
 
+	/*
+		Growth: 먹이 하나 당 5 ~ 15, 50 당 body 하나로 가정
+		최소 body 길이 5.
+		growth가 줄어들면 smooth하게 body가 줄어들어야함: 맨 뒤의 child와 그 앞의 child 사이의 거리 조절
+	*/
+
 	worm_() {}
-	worm_(uint initial_body_num)
+	worm_(float initial_growth)
 	{
 		float theta = rand_direction();
 		float alpha = rand_direction();
 		vec3 initd = get_random_vector();
 
 		head.direction = initd;
-
 		float head_pos_rad = randf(0, WORLD_BORDER_RADIUS);
 		head = WormBody(head_pos_rad * get_random_vector(), initd);
-
 		color = vec4(randf(0.2f, 1), randf(0.2f, 1), randf(0.2f, 1), 1);
 
-		for (size_t i = 1; i <= initial_body_num; i++)
-		{
-			WormBody child = WormBody(head.pos - BODY_GAP * head.direction * (float)i, initd);
-			body.push_back(child);
-		}
-
+		growth = initial_growth;
 		UID = format_string("%04d-%04d", randi(0, 10000), randi(0, 10000));
+
+		update_body(0);
 	}
-	worm_(vec3 initial_pos, uint initial_body_num)
+	worm_(vec3 initial_pos, float initial_growth)
 	{
 		float theta = rand_direction();
 		float alpha = rand_direction();
 		vec3 initd = get_random_vector();
 
 		head.direction = initd;
-
 		head = WormBody(initial_pos, initd);
-
 		color = vec4(randf(0, 1), randf(0, 1), randf(0, 1), 1);
 
-		for (size_t i = 1; i <= initial_body_num; i++)
-		{
-			WormBody child = WormBody(head.pos - BODY_GAP * head.direction * (float)i, initd);
-			body.push_back(child);
-		}
+		growth = initial_growth;
 		UID = format_string("%04d-%04d", randi(0, 10000), randi(0, 10000));
+
+		update_body(0);
 	}
 	void render_sphere(GLuint shader_program, uint sphere_triangles)
 	{
@@ -159,34 +193,25 @@ public:
 	}
 	void update(float time_tick)
 	{
-		extern GameLogDrawer gld;
+		using wit = vector<WormBody>::iterator;
+
 		if (!is_player)
 		{
-			// 나중에 위로 뺄 것
-			using wit = vector<WormBody>::iterator;
-			float move_dist = speed * time_tick;
-
-			for (wit iter = body.end() - 1; iter > body.begin(); --iter)
-			{
-				wit parent = iter - 1;
-				iter->update_and_move(parent->pos, move_dist);
-			}
-			wit eldest_child = body.begin();
-			eldest_child->update_and_move(head.pos, move_dist);
-
 			// move algorithm as AI
 			elapsed_direction_change_timestamp += time_tick;
 			if (elapsed_direction_change_timestamp > auto_direction_change_period)
 			{
 				elapsed_direction_change_timestamp = 0;
-				//head.direction = get_restricted_vector(head.direction, randf(MIN_DIRECTION_CHANGE, MAX_DIRECTION_CHANGE));
-				auto_direction_change_period = AUTO_DIRECTION_CHANGE_PERIOD_KEYWORD;
+				//decided_direction = get_restricted_vector(head.direction, randf(MIN_DIRECTION_CHANGE, MAX_DIRECTION_CHANGE));
 				decided_direction = get_random_vector();
-				//gld.add("Worm[UID: " + UID + "] changed its direction");
+
+				auto_direction_change_period = AUTO_DIRECTION_CHANGE_PERIOD_KEYWORD;
 			}
-			head.direction += (decided_direction - head.direction) * 0.01f;
-			head.update_and_move(head.direction + head.pos, move_dist);
 		}
+
+		head.direction += (decided_direction - head.direction) * 0.01f;
+		head.direction = head.direction.normalize();
+		update_body(time_tick);
 	}
 	void make_player()
 	{

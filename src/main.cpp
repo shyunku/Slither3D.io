@@ -76,6 +76,9 @@ void render()
 	svd.draw(format_string("Elapsed time: %.2fs", elapsed_time));
 	svd.draw(format_string("Update time tick: %.4fs", time_tick));
 	svd.draw(format_string("FPS: %d", int(fFPS)));
+	svd.blank(1);
+	svd.draw(format_string("Look Direction: " + get_vec3_string(player->camera.look_direction)));
+	svd.draw(format_string("Move Direction: " + get_vec3_string(player->me->head.direction)));
 
 	// Game Event Log Panel
 	gld.draw_all();
@@ -131,7 +134,7 @@ void initialize_environment()
 	// Game Moderator
 	game_moderator = GameModerator(large_sphere_vertex_property, small_sphere_vertex_property, circle_vertex_property);
 
-	player = new Player(game_moderator.ingame_object_manager.get_player());
+	player = std::move(new Player(game_moderator.ingame_object_manager.get_player()));
 
 
 	// Initial User Action

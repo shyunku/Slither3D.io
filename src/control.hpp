@@ -37,7 +37,8 @@ void mouse_motion_event_listener(GLFWwindow* window, double x, double y)
 	last_x = x;
 	last_y = y;
 
-	player->camera.direction_adjust(x_diff, y_diff);
+	player->camera.look_direction_adjust(x_diff, y_diff);
+	player->set_move_direction();
 	//logger("Mouse Motion: (" + to_string(x_diff) + ", " + to_string(y_diff) + ")");
 }
 

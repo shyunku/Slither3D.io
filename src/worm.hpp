@@ -30,12 +30,6 @@ public:
 		radius = 0.6f;
 		this->direction = direction;
 	}
-	worm_body_(vec3 initial_pos, float size, vec3 direction)
-	{
-		pos = initial_pos;
-		radius = size;
-		this->direction = direction;
-	}
 	mat4 get_model_matrix()
 	{
 		return
@@ -47,19 +41,23 @@ public:
 	{
 		pos += direction * move_dist;
 	}
-	void track_parent(vec3 parent_pos, const float body_gap)
+	void track_parent(vec3 parent_pos)
 	{
 		direction = (parent_pos - pos).normalize();
-		pos = parent_pos - direction * body_gap;
+		pos = parent_pos - direction * radius * 0.8f;
+	}
+	void set_size(float size)
+	{
+		radius = size;
 	}
 }WormBody;
 
 typedef class worm_
 {
 private:
-	const float			BODY_GAP = 0.6f;
+	const float			INITIAL_BODY_GAP = 0.6f;
 	const float			BODY_GROWTH = 50.f;
-	const float			MIN_BODY_LENGTH = 5;
+	const float			MIN_BODY_LENGTH = 10;
 	const float			MIN_DIRECTION_CHANGE = PI / 4;
 	const float			MAX_DIRECTION_CHANGE = PI / 2;
 	vec4				color;
@@ -124,7 +122,7 @@ private:
 			uint count = 0;
 			while (body_num != body.size())
 			{
-				body.push_back(WormBody(last_body.pos - BODY_GAP * last_body.direction * (float)++count, last_body.direction));
+				body.push_back(WormBody(last_body.pos - INITIAL_BODY_GAP * last_body.direction * (float)++count, last_body.direction));
 			}
 		}
 
@@ -134,7 +132,7 @@ private:
 		for (vector<WormBody>::iterator iter = body.begin(); iter < body.end(); ++iter)
 		{
 			WormBody parent = iter == body.begin() ? head : *(iter - 1);
-			iter->track_parent(parent.pos, BODY_GAP);
+			iter->track_parent(parent.pos);
 		}
 	}
 public:
@@ -149,9 +147,12 @@ public:
 	vec3				decided_direction = vec3(0);
 
 	/*
-		Growth: 먹이 하나 당 5 ~ 15, 50 당 body 하나로 가정
-		최소 body 길이 5.
-		growth가 줄어들면 smooth하게 body가 줄어들어야함: 맨 뒤의 child와 그 앞의 child 사이의 거리 조절
+		size(radius) 최소 0.5
+		growth - size:
+		0 - 0.5
+		300 - 1.0
+		1000 - 1.5
+		0.5ln(x+200) - ln(sqrt(200)) + 0.5
 	*/
 
 	worm_() {}
@@ -193,10 +194,10 @@ public:
 	}
 	void update(float time_tick)
 	{
-		using wit = vector<WormBody>::iterator;
-
 		if (!is_player)
 		{
+			// Enemy worm AI
+
 			// move algorithm as AI
 			elapsed_direction_change_timestamp += time_tick;
 			if (elapsed_direction_change_timestamp > auto_direction_change_period)
@@ -212,6 +213,20 @@ public:
 		head.direction += (decided_direction - head.direction) * 0.01f;
 		head.direction = head.direction.normalize();
 		update_body(time_tick);
+
+		if (head.pos.length() > WORLD_BORDER_RADIUS)
+		{
+			extern GameEventLogger gevent;
+			gevent.add("Worm[UID: " + UID + "] arranged as out of range!");
+		}
+
+		// resizing
+		float new_size = (logf(growth + 200) + 1) / 2 - logf(sqrtf(200));
+		head.set_size(new_size);
+		for (vector<WormBody>::iterator iter = body.begin(); iter != body.end(); ++iter)
+		{
+			iter->set_size(new_size);
+		}
 	}
 	void make_player()
 	{

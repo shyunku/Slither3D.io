@@ -21,10 +21,10 @@ ivec3							background_color = ivec3(0);
 GameModerator					game_moderator;
 KeypressTracker					keypress_tracker;
 
-AppInfoDrawer					aid;
-StaticValueDrawer				svd;
-CommandFrameDrawer				cfd;
-GameLogDrawer					gld;
+AppInfoLogger					ail;
+StaticValueLogger				svl;
+CommandConsole					console;
+GameEventLogger					gevent;
 
 
 /* --------------------------- Global Shader Programs  --------------------------- */
@@ -69,24 +69,24 @@ void render()
 	float fFPS = 1.f / time_tick;
 
 	// App Information Draw
-	aid.draw(app_name + " " + version_str);
+	ail.draw(app_name + " " + version_str);
 
 	// Static Value Drawer
-	svd.draw("FrameCount: " + to_string(frame_count));
-	svd.draw(format_string("Elapsed time: %.2fs", elapsed_time));
-	svd.draw(format_string("Update time tick: %.4fs", time_tick));
-	svd.draw(format_string("FPS: %d", int(fFPS)));
-	svd.blank(1);
-	svd.draw(format_string("Look Direction: " + get_vec3_string(player->camera.look_direction)));
-	svd.draw(format_string("Move Direction: " + get_vec3_string(player->me->head.direction)));
+	svl.draw("FrameCount: " + to_string(frame_count));
+	svl.draw(format_string("Elapsed time: %.2fs", elapsed_time));
+	svl.draw(format_string("Update time tick: %.4fs", time_tick));
+	svl.draw(format_string("FPS: %d", int(fFPS)));
+	svl.blank(1);
+	svl.draw(format_string("Look Direction: " + get_vec3_string(player->camera.look_direction)));
+	svl.draw(format_string("Move Direction: " + get_vec3_string(player->me->head.direction)));
 
 	// Game Event Log Panel
-	gld.draw_all();
-	cfd.draw_all();
+	gevent.draw_all();
+	console.draw_all();
 
 	// Clear Stacked Logs
-	aid.clear_stack();
-	svd.clear_stack();
+	ail.clear_stack();
+	svl.clear_stack();
 
 	// Render Objects
 	game_moderator.render();

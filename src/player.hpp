@@ -34,6 +34,6 @@ public:
 	}
 	inline void set_move_direction()
 	{
-		me->head.direction = camera.look_direction.normalize();
+		me->decided_direction = camera.look_direction.normalize();
 	}
 }Player;

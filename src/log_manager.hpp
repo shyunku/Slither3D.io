@@ -126,7 +126,7 @@ public:
 			ucol::standard_log
 		);
 	}
-}AppInfoDrawer;
+}AppInfoLogger;
 
 /*
 	Display static values of variables
@@ -148,7 +148,7 @@ public:
 			ucol::standard_log
 		);
 	}
-}StaticValueDrawer;
+}StaticValueLogger;
 
 /*
 	Display Command History or console
@@ -345,7 +345,7 @@ public:
 		add("No command keyword for '" + keyword + "'", _WARNING_);
 		add("Try /help or /h to see how to use.", _HIGHLIGHTED_);
 	}
-}CommandFrameDrawer;
+}CommandConsole;
 
 
 /*
@@ -384,4 +384,4 @@ public:
 			log_history.erase(log_history.begin());
 		}
 	}
-}GameLogDrawer;
+}GameEventLogger;

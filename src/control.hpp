@@ -44,10 +44,10 @@ void mouse_motion_event_listener(GLFWwindow* window, double x, double y)
 
 void key_type_event_listener(GLFWwindow* window, GLuint codepoint)
 {
-	extern CommandFrameDrawer cfd;
-	if (cfd.listener_switch)
+	extern CommandConsole console;
+	if (console.listener_switch)
 	{
-		cfd.append(char(codepoint));
+		console.append(char(codepoint));
 	}
 }
 
@@ -59,31 +59,29 @@ void keyboard_event_listener(GLFWwindow* window, int key, int scancode, int acti
 
 	static ivec2 original_window_size;
 	extern KeypressTracker keypress_tracker;
-	extern CommandFrameDrawer cfd;
+	extern CommandConsole console;
 
-	if (cfd.listener_switch)
-	{
-		extern CommandFrameDrawer cfd;
-		
+	if (console.listener_switch)
+	{		
 		if (action == GLFW_PRESS)
 		{
 			switch (key)
 			{
 			case GLFW_KEY_ENTER:		// disable command_mode
-				cfd.complete();
+				console.complete();
 				break;
 			case GLFW_KEY_ESCAPE:
-				cfd.cancel();
+				console.cancel();
 				break;
 			case GLFW_KEY_BACKSPACE:
-				cfd.backspace();
+				console.backspace();
 				break;
 			}
 		}
 	}
 	else if (key == GLFW_KEY_SLASH && action == GLFW_PRESS)
 	{
-		cfd.activate();
+		console.activate();
 	}
 	else if (action == GLFW_PRESS)
 	{

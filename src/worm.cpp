@@ -1,6 +1,10 @@
 #include "worm.hpp"
 
+#include "glutil.hpp"
+#include "util.hpp"
+#include "log_manager.hpp"
 
+extern GameEventLogger gevent;
 
 /* -------------------------------------------------------- Worm Body -------------------------------------------------------- */
 
@@ -181,7 +185,7 @@ void Worm::update(float time_tick)
 				//decided_direction = get_restricted_vector(head.direction, randf(MIN_DIRECTION_CHANGE, MAX_DIRECTION_CHANGE));
 				decided_direction = get_random_vector();
 
-				auto_direction_change_period = AUTO_DIRECTION_CHANGE_PERIOD_KEYWORD;
+				auto_direction_change_period = randf(0.3f, 3.f);
 			}
 		}
 	}
@@ -192,7 +196,6 @@ void Worm::update(float time_tick)
 
 	if (head.pos.length() > WORLD_BORDER_RADIUS)
 	{
-		extern GameEventLogger gevent;
 		gevent.add("Worm[UID: " + UID + "] arranged as out of range! (over: " + to_string(head.pos.length() - WORLD_BORDER_RADIUS));
 	}
 

@@ -1,14 +1,14 @@
 #pragma once
-#include <iostream>
 #include "cgmath.h"
 #include "cgut.h"
+#include <iostream>
 
 using namespace std;
 
-inline float rand_direction();
-inline float randf(float LO, float HI);
-inline float rand_fraction();
-inline int randi(int LO, int HI);
+float randf(float LO, float HI);
+float rand_direction();
+float rand_fraction();
+int randi(int LO, int HI);
 inline float distancef(vec3 v1, vec3 v2);
 inline float refinef(float f);
 vec3 get_random_vector();

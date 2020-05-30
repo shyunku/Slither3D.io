@@ -2,11 +2,6 @@
 #include "cgmath.h"
 #include "cgut.h"
 
-#include "glutil.hpp"
-#include "util.hpp"
-#include "player.hpp"
-#include "log_manager.hpp"
-#include "camera.hpp"
 
 typedef struct track_keypress 
 {

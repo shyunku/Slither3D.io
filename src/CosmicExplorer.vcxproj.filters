@@ -119,9 +119,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gl\glad\glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="player.cpp">
       <Filter>Source Files\declaration</Filter>
     </ClCompile>
@@ -142,6 +139,12 @@
     </ClCompile>
     <ClCompile Include="glutil.cpp">
       <Filter>Source Files\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="text_manager.cpp">
+      <Filter>Source Files\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="gl\glad\glad.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

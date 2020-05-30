@@ -1,24 +1,25 @@
 #include "util.hpp"
+#include <iostream>
 
-extern const std::string app_name = "Slither3D.io";
-extern const std::string version_str = "0.2.4v - Beta";
+extern string	app_name;
+extern string	version_str;
 
-inline float rand_direction()
+float rand_direction()
 {
 	return static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2 * PI));
 }
 
-inline float randf(float LO, float HI)
+float randf(float LO, float HI)
 {
 	return LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
 }
 
-inline float rand_fraction()
+float rand_fraction()
 {
 	return randf(0, 1);
 }
 
-inline int randi(int LO, int HI)
+int randi(int LO, int HI)
 {
 	return LO + rand() % (HI - LO);
 }

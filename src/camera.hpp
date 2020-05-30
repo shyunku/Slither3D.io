@@ -24,6 +24,6 @@ public:
 	void update(vec3 camera_pos);
 	void set_aspect_ratio(float ratio);
 	void revalidate_projection_matrix();
-	inline void look_direction_adjust(float x, float y);
-	inline void set_looking_at(vec3 look);
+	void look_direction_adjust(float x, float y);
+	void set_looking_at(vec3 look);
 }Camera;

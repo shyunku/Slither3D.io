@@ -1,15 +1,4 @@
 #include "log_manager.hpp"
-#include "player.hpp"
-
-extern const vec4 white;
-
-extern const vec4 standard_log;
-extern const vec4 event_log;
-
-extern const vec4 console_verbose;
-extern const vec4 console_warning;
-extern const vec4 console_error;
-extern const vec4 console_highlighted;
 
 /* -------------------------------------------------------- Command Console -------------------------------------------------------- */
 void CommandConsole::flush()
@@ -272,7 +261,7 @@ inline void GameEventLogger::draw_all()
 		);
 	}
 }
-inline void GameEventLogger::add(string str)
+void GameEventLogger::add(string str)
 {
 	log_history.push_back(get_current_time_string() + " " + str);
 	if (log_history.size() > MAX_LOG_LIMIT)

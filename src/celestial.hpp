@@ -2,6 +2,7 @@
 #include "cgut.h"
 #include "cgmath.h"
 #include "util.hpp"
+#include "glutil.hpp"
 
 using namespace std;
 

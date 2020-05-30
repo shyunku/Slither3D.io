@@ -1,25 +1,20 @@
+#include "player.hpp"
+
+#include "command.hpp"
 #include "control.hpp"
 #include "game_moderator.hpp"
-#include "camera.hpp"
-#include "objvert.hpp"
-#include "util.hpp"
-#include "player.hpp"
-#include "text_manager.hpp"
-#include "command.hpp"
-
-/* Constants*/
 
 /* --------------------------- Constant Strings  --------------------------- */
-const char* root_path_str = "../bin/";
-const char* default_frag_path = "shaders/default/default.frag";
-const char* default_vert_path = "shaders/default/default.vert";
+const char*				root_path_str = "../bin/";
+const char*				default_frag_path = "shaders/default/default.frag";
+const char*				default_vert_path = "shaders/default/default.vert";
 
-const char* font_path = "../bin/resources/fonts/consola.ttf";
-const char* text_frag_path = "shaders/text/text.frag";
-const char* text_vert_path = "shaders/text/text.vert";
+const char*				font_path = "../bin/resources/fonts/consola.ttf";
+const char*				text_frag_path = "shaders/text/text.frag";
+const char*				text_vert_path = "shaders/text/text.vert";
 
-const std::string		app_name = "Slither3D.io";
-const std::string		version_str = "0.2.4v_t0 - Beta";
+string					app_name = "Slither3D.io";
+string					version_str = "0.2.5v - Beta";
 
 const uint				FPS_LIMIT = 144;
 

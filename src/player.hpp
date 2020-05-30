@@ -1,6 +1,6 @@
 #pragma once
-#include "camera.hpp"
 #include "worm.hpp"
+#include "camera.hpp"
 
 typedef class player_
 {
@@ -12,7 +12,7 @@ public:
 	Camera		camera;
 	player_();
 	player_(Worm* me);
-	inline void update(float time_tick);
+	void update(float time_tick);
 	inline vec3 get_pos();
-	inline void set_move_direction();
+	void set_move_direction();
 }Player;

@@ -1,6 +1,13 @@
 #include "control.hpp"
 
+#include "camera.hpp"
+#include "player.hpp"
+#include "glutil.hpp"
+#include "util.hpp"
+#include "log_manager.hpp"
+
 extern CommandConsole console;
+extern Player* player;
 
 void mouse_click_event_listener(GLFWwindow* window, int button, int action, int mods)
 {
@@ -16,7 +23,6 @@ void mouse_click_event_listener(GLFWwindow* window, int button, int action, int 
 
 void mouse_motion_event_listener(GLFWwindow* window, double x, double y)
 {
-	extern Player* player;
 	static double last_x = 0;
 	static double last_y = 0;
 

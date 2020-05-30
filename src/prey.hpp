@@ -1,13 +1,11 @@
 #pragma once
 #include "cgut.h"
 #include "cgmath.h"
+#include "util.hpp"
+#include "glutil.hpp"
 #include "log_manager.hpp"
 
 extern const float WORLD_BORDER_RADIUS;
-
-extern vec3 get_random_vector();
-extern inline float randf(float LO, float HI);
-extern GLuint get_validated_uniform_location(GLuint shader_program, const char* name);
 
 typedef class prey_
 {

@@ -1,24 +1,9 @@
 #pragma once
 #include "cgmath.h"
 #include "cgut.h"
-#include "log_manager.hpp"
-
-#define AUTO_DIRECTION_CHANGE_PERIOD_KEYWORD randf(0.3f, 3.f)
-extern inline float rand_fraction();
-extern inline float randf(float LO, float HI);
-extern inline float rand_direction();
-extern inline int randi(int LO, int HI);
-extern GLuint get_validated_uniform_location(GLuint shader_program, const char* name);
-extern const float WORLD_BORDER_RADIUS;
-extern void print_vec3(vec3 v);
-extern string format_string(const string fmt, ...);
-extern string get_vec3_string(vec3 v);
-extern vec3 get_random_vector();
-
-
-extern const float WORLD_BORDER_RADIUS;
-
 using namespace std;
+
+extern const float WORLD_BORDER_RADIUS;
 
 typedef class worm_body_
 {
@@ -60,7 +45,7 @@ public:
 	float				growth;
 
 	// AI area
-	float				auto_direction_change_period = AUTO_DIRECTION_CHANGE_PERIOD_KEYWORD;
+	float				auto_direction_change_period = 0;
 	float				elapsed_direction_change_timestamp = 0;
 	vec3				decided_direction = vec3(0);
 

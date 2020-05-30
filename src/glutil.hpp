@@ -1,10 +1,10 @@
 #pragma once
 #include "cgmath.h"		// slee's simple math library
 #include "cgut.h"		// slee's OpenGL utility
-#include "camera.hpp"
-#include "player.hpp"
 
 extern const char* root_path_str;
+
+using namespace std;
 
 dvec2 get_glfw_get_cursor_position(GLFWwindow* window);
 float get_glfw_curtime();

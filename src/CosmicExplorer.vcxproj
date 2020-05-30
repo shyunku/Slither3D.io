@@ -154,8 +154,9 @@
     <ClCompile Include="glutil.cpp" />
     <ClCompile Include="log_manager.cpp" />
     <ClCompile Include="player.cpp" />
-    <ClCompile Include="gl\glad\glad.c" />
+    <ClCompile Include="gl\glad\glad.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="text_manager.cpp" />
     <ClCompile Include="util.cpp" />
     <ClCompile Include="worm.cpp" />
   </ItemGroup>

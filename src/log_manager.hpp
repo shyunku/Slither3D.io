@@ -1,12 +1,21 @@
 #pragma once
 #include "cgmath.h"
 #include "cgut.h"
+
 #include "command.hpp"
+#include "player.hpp"
+#include "util.hpp"
+#include "text_manager.hpp"
 
 using namespace std;
-extern void draw_string(string text, GLint _x, GLint _y, GLfloat scale, vec4 color);
-extern float get_string_width(string str, float scale);
-extern string get_current_time_string();
+
+extern const vec4 white;
+extern const vec4 standard_log;
+extern const vec4 event_log;
+extern const vec4 console_verbose;
+extern const vec4 console_warning;
+extern const vec4 console_error;
+extern const vec4 console_highlighted;
 
 
 typedef enum system_announcement_level {_VERBOSE_, _HIGHLIGHTED_, _WARNING_, _ERROR_ }SystemAnnounceLevel;
@@ -101,7 +110,7 @@ private:
 public:
 	game_log_drawer_();
 	inline void draw_all();
-	inline void add(string str);
+	void add(string str);
 }GameEventLogger;
 
 /*

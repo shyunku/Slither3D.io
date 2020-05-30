@@ -1,4 +1,9 @@
 #include "glutil.hpp"
+#include "camera.hpp"
+#include "player.hpp"
+#include <iostream>
+
+using namespace std;
 
 dvec2 get_glfw_get_cursor_position(GLFWwindow* window)
 {

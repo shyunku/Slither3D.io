@@ -46,12 +46,18 @@ public:
 	bool				is_player = false;
 	bool				boosting = false;
 	float				growth;
+	vec3				decided_direction = vec3(0);
 
 	// AI area
 	AI_STATUS			ai_status = STANDARD;
+
+	//
+
+	// STANDARD
 	float				auto_direction_change_period = 0;
-	float				elapsed_direction_change_timestamp = 0;
-	vec3				decided_direction = vec3(0);
+	float				elapsed_evade_wall_timestamp = 0;
+	float				elapsed_standard_timestamp = 0;
+	
 
 	worm_();
 	worm_(float initial_growth, uint id);

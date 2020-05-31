@@ -31,7 +31,8 @@ public:
 	prey_()
 	{
 		float virtual_rad = cbrt(randf(0,1)) * (WORLD_BORDER_RADIUS - BORDER_PADDING_ARRANGE_OFFSET);
-		vec3 rand_vec = get_random_vector();
+		//vec3 rand_vec = get_random_vector();
+		vec3 rand_vec = get_restricted_vector(vec3(0, 1, 0), PI);
 
 		pos = virtual_rad * rand_vec;
 		radius = randf(MIN_RADIUS, MAX_RADIUS);

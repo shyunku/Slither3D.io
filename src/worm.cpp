@@ -131,43 +131,68 @@ void Worm::update(float time_tick)
 {
 	if (!is_player)
 	{
+		bool ai_decide = false;
 		// Enemy worm AI (has priority)
 
 		// 1. Evade world border
-		if (head.pos.length() > AVOID_WALL_START_RANGE)
+		if (!ai_decide)
 		{
-			float pos_rate = (head.pos.length() - AVOID_WALL_START_RANGE) / (WORLD_BORDER_RADIUS - AVOID_WALL_START_RANGE);
-			if (rand_fraction() < pos_rate)
+			if (head.pos.length() > (WORLD_BORDER_RADIUS - speed - head.radius))
 			{
-				// More further from origin (more close to border), Probability to avoid wall increases
-				// and more break angle to origin
-				decided_direction = get_restricted_vector(-head.pos.normalize(), (PI / 2) * (2 - pos_rate));
+
+				decided_direction = -head.pos.normalize();
+
 				ai_status = EVADE_BORDER;
+				ai_decide = true;
+
+				//float pos_rate = (head.pos.length() - AVOID_WALL_START_RANGE) / (WORLD_BORDER_RADIUS - AVOID_WALL_START_RANGE);
+				//if (rand_fraction() < pos_rate)
+				//{
+				//	// More further from origin (more close to border), Probability to avoid wall increases
+				//	// and more break angle to origin
+
+				//	elapsed_evade_wall_timestamp += time_tick;
+				//	if (elapsed_evade_wall_timestamp > auto_direction_change_period)
+				//	{
+				//		elapsed_evade_wall_timestamp = 0;
+				//		//decided_direction = get_restricted_vector(head.direction, randf(MIN_DIRECTION_CHANGE, MAX_DIRECTION_CHANGE));
+				//		decided_direction = get_restricted_vector(-head.pos.normalize(), PI - pos_rate * PI);
+
+				//		gevent.add(format_string("Pos_rate: %.3f", pos_rate));
+
+				//		auto_direction_change_period = 1.f;
+				//		ai_status = EVADE_BORDER;
+				//		ai_decide = true;
+				//	}
+				//}
 			}
 		}
 		// 2. Defense/Offense others
-		else if (false)
+		if (!ai_decide)
 		{
 			ai_status = DEFENSE;
+			//ai_decide = true;
 		}
 		// 3. Seek for Prey
-		else if (false)
+		if (!ai_decide)
 		{
 			ai_status = SEEK_PREY;
+			//ai_decide = true;
 		}
 		// Last. Standard movement
-		else
+		if (!ai_decide)
 		{
-			elapsed_direction_change_timestamp += time_tick;
-			if (elapsed_direction_change_timestamp > auto_direction_change_period)
+			elapsed_standard_timestamp += time_tick;
+			if (elapsed_standard_timestamp > auto_direction_change_period)
 			{
-				elapsed_direction_change_timestamp = 0;
+				elapsed_standard_timestamp = 0;
 				//decided_direction = get_restricted_vector(head.direction, randf(MIN_DIRECTION_CHANGE, MAX_DIRECTION_CHANGE));
 				decided_direction = get_random_vector();
 
 				auto_direction_change_period = randf(0.3f, 3.f);
+				ai_status = STANDARD;
+				ai_decide = true;
 			}
-			ai_status = STANDARD;
 		}
 	}
 
@@ -177,8 +202,8 @@ void Worm::update(float time_tick)
 
 	if (head.pos.length() > WORLD_BORDER_RADIUS)
 	{
-		gevent.add("Worm[UID: " + format_string("%3u", object_id) + "] arranged as out of range! (over: " 
-			+ format_string("%8.3f)", head.pos.length() - WORLD_BORDER_RADIUS));
+		/*gevent.add("Worm[UID: " + format_string("%3u", object_id) + "] arranged as out of range! (over: " 
+			+ format_string("%8.3f)", head.pos.length() - WORLD_BORDER_RADIUS));*/
 	}
 
 	// resizing

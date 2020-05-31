@@ -15,6 +15,7 @@ inline vec3 Player::get_pos()
 }
 void Player::set_move_direction()
 {
+	if (me->get_id() != possess_worm)return;
 	me->decided_direction = camera.look_direction.normalize();
 }
 void Player::set_player(Worm* worm, uint index)

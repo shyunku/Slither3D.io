@@ -7,6 +7,7 @@
 #include "world_border.hpp"
 #include "player.hpp"
 #include <unordered_map>
+#include <utility>
 
 extern CommandConsole console;
 extern Player* player;
@@ -95,6 +96,19 @@ public:
 		worms.insert(worm_map::value_type(worm_id, worm));
 
 		return worm_id++;
+	}
+	pair<uint, uint> push_new_worm_pairs(uint num)
+	{
+		uint start = worm_id;
+		for (uint i = 0; i < num; i++)
+		{
+			Worm worm = Worm(randf(100, 900), worm_id);
+			worms.insert(worm_map::value_type(worm_id, worm));
+			worm_id++;
+		}
+		uint end = worm_id - 1;
+
+		return make_pair(start,end);
 	}
 	void push_player_worm_pair()
 	{

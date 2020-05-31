@@ -35,7 +35,7 @@ public:
 		small_sphere_vertex_property(small_sphere_vertex_propery),
 		circle_vertex_property(circle_vertex_property)
 	{
-		uint initial_worm_num = 2;
+		uint initial_worm_num = 1;
 		for (uint i = 0; i < initial_worm_num - 1; i++)
 		{
 			push_new_worm_pair();
@@ -88,6 +88,60 @@ public:
 		for (unordered_map<uint, Worm>::iterator iter = worms.begin(); iter != worms.end(); ++iter)
 		{
 			iter->second.update(time_tick);
+		}
+		magnet_prey();
+		detect_collision_worms();
+		detect_collision_worm_prey();
+	}
+	void detect_collision_worms() {
+		// iter1 == target worm
+		for (unordered_map<uint, Worm>::iterator iter1 = worms.begin(); iter1 != worms.end(); ++iter1)
+		{
+			// iter2 == other worm
+			for (unordered_map<uint, Worm>::iterator iter2 = worms.begin(); iter2 != worms.end(); ++iter2)
+			{
+				if (iter1->second.get_id() == iter2->second.get_id()) continue;
+				else
+				{
+					// iter3 == worm body
+					for (vector<WormBody>::iterator iter3 = iter2->second.body.begin(); iter3 != iter2->second.body.end(); ++iter3)
+					{
+						if (distance(iter1->second.head.pos, iter3->pos) <= iter1->second.head.radius + iter3->radius)
+						{
+							remove_worm(iter1->second.get_id());
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	void magnet_prey() {
+		for (unordered_map<uint, Worm>::iterator iter1 = worms.begin(); iter1 != worms.end(); ++iter1)
+		{
+			// iter2 == prey
+			for (vector<Prey>::iterator iter2 = preys.begin(); iter2 != preys.end(); ++iter2)
+			{
+				if (distance(iter1->second.head.pos, iter2->pos) <= iter1->second.head.radius + iter2->radius + 0.5f)
+				{
+					vec3 diff_vec = iter2->pos - iter1->second.head.pos;
+					iter2->pos -= diff_vec * 0.1f;
+				}
+			}
+		}
+	}
+	void detect_collision_worm_prey() {
+		// iter1 == target worm
+		for (unordered_map<uint, Worm>::iterator iter1 = worms.begin(); iter1 != worms.end(); ++iter1)
+		{
+			// iter2 == prey
+			for (vector<Prey>::iterator iter2 = preys.begin(); iter2 != preys.end(); ++iter2)
+			{
+				if (distance(iter1->second.head.pos, iter2->pos) <= iter1->second.head.radius + iter2->radius)
+				{
+					iter1->second.growth += iter2->amount;
+				}
+			}
 		}
 	}
 	int push_new_worm_pair()

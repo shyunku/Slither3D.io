@@ -36,13 +36,13 @@ private:
 	const float			MAX_SPEED = 200.f;
 	vec4				color;
 	uint				object_id;
-	vector<WormBody>	body;
 	void render_head(GLuint shader_program, uint sphere_triangles);
 	void render_body(GLuint shader_program, uint sphere_triangles);
 	void update_body(float time_tick);
 public:
 	float				speed = DEFAULT_SPEED;
 	WormBody			head;
+	vector<WormBody>	body;
 	bool				is_player = false;
 	bool				boosting = false;
 	float				growth;

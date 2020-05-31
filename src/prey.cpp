@@ -23,7 +23,7 @@ Prey::prey_()
 	radius = randf(MIN_RADIUS, MAX_RADIUS);
 	amount = MIN_AMOUNT + (MAX_AMOUNT - MIN_AMOUNT) * (radius - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS);
 
-	flickering_period = randf(1.2f, 3.f);
+	flickering_period = randf(2.f, 4.f);
 }
 Prey::prey_(vec3 target_pos)
 {
@@ -34,7 +34,7 @@ Prey::prey_(vec3 target_pos)
 	radius = randf(MIN_RADIUS, MAX_RADIUS);
 	amount = MIN_AMOUNT + (MAX_AMOUNT - MIN_AMOUNT) * (radius - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS);
 
-	flickering_period = randf(1.2f, 3.f);
+	flickering_period = randf(2.f, 4.f);
 }
 void Prey::render(GLuint shader_program, uint sphere_triangles)
 {
@@ -43,8 +43,8 @@ void Prey::render(GLuint shader_program, uint sphere_triangles)
 	uloc = get_validated_uniform_location(shader_program, "model_matrix");
 	glUniformMatrix4fv(uloc, 1, GL_TRUE, get_model_matrix());
 
-	//uloc = get_validated_uniform_location(shader_program, "solid_color");
-	//glUniform4fv(uloc, 1, vec4(1, 0, 1, 1));
+	uloc = get_validated_uniform_location(shader_program, "solid_color");
+	glUniform4fv(uloc, 1, color);
 
 	glDrawElements(GL_TRIANGLES, sphere_triangles, GL_UNSIGNED_INT, nullptr);
 }

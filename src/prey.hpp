@@ -1,6 +1,7 @@
 #pragma once
 #include "cgmath.h"
 #include "cgut.h"
+#include "util.hpp"
 
 extern const float WORLD_BORDER_RADIUS;
 
@@ -12,9 +13,11 @@ private:
 	const float MIN_RADIUS = 0.1f;
 	const float MAX_AMOUNT = 4.f;
 	const float MIN_AMOUNT = 1.f;
+
 	float flickering_period;
 	uint object_id;
 	mat4 get_model_matrix();
+	vec4 color = vec4(randf(0.7f, 1), randf(0.7f, 1), randf(0.7f, 1), 1);
 public:
 	vec3 pos;
 	float radius;

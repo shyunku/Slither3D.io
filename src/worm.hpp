@@ -74,4 +74,7 @@ public:
 	void boost_poof();
 	bool detect_death(worm_ other);
 	bool detect_eat_prey(Prey prey);
+	float get_camera_distance();
+	void enable_boost();
+	void disable_boost();
 }Worm;

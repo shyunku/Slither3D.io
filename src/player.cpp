@@ -7,7 +7,7 @@ Player::player_(Worm* me)
 }
 void Player::update(float time_tick)
 {
-	camera.update(me->head.pos - camera.look_direction * LOOK_DISTANCE);
+	camera.update(me->head.pos - camera.look_direction * (LOOK_DISTANCE + me->get_camera_distance()));
 }
 inline vec3 Player::get_pos()
 {

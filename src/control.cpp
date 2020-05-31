@@ -15,11 +15,17 @@ void mouse_click_event_listener(GLFWwindow* window, int button, int action, int 
 	{
 		if (action == GLFW_PRESS)
 		{
-			player->me->boosting = true;
+			if (player->me->get_id() == player->possess_worm)
+			{
+				player->me->boosting = true;
+			}
 		}
 		else if(action == GLFW_RELEASE)
 		{
-			player->me->boosting = false;
+			if (player->me->get_id() == player->possess_worm)
+			{
+				player->me->boosting = false;
+			}
 		}
 	}
 }

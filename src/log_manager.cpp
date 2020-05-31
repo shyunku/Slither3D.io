@@ -177,6 +177,7 @@ void CommandConsole::execute_command()
 	}
 	else if (!keyword.compare("deb"))
 	{
+		player->me->growth = stof(command_parser.get_segment(0));
 		return;
 	}
 
@@ -280,7 +281,10 @@ void CommandConsole::append(char c)
 }
 void CommandConsole::backspace()
 {
-	command_builder.pop_back();
+	if (!command_builder.empty())
+	{
+		command_builder.pop_back();
+	}
 }
 void CommandConsole::seek_command_history(bool seek_prev)
 {

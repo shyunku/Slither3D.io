@@ -200,7 +200,7 @@ void Worm::update(float time_tick)
 		}
 	}
 
-	head.direction += (decided_direction - head.direction) * 0.01f;
+	head.direction += (decided_direction - head.direction) * 0.05f;
 	head.direction = head.direction.normalize();
 	update_body(time_tick);
 
@@ -216,6 +216,11 @@ void Worm::update(float time_tick)
 	for (vector<WormBody>::iterator iter = body.begin(); iter != body.end(); ++iter)
 	{
 		iter->set_size(new_size);
+	}
+
+	if (growth < 0)
+	{
+		growth = 0;
 	}
 }
 void Worm::make_player()
@@ -257,8 +262,7 @@ string Worm::get_ai_status()
 }
 void Worm::boost_poof()
 {
-	if (growth <= 0) return;
-	if (boosting)
+	if (boosting && growth > 0)
 	{
 		growth -= 0.2f;
 		WormBody tail = body.back();
@@ -286,4 +290,19 @@ bool Worm::detect_death(worm_ other)
 bool Worm::detect_eat_prey(Prey prey)
 {
 	return distance(head.pos, prey.pos) < (head.radius + prey.radius);
+}
+float Worm::get_camera_distance()
+{
+	return growth / BODY_GROWTH;
+}
+void Worm::enable_boost()
+{
+	if (growth > 0)
+	{
+		boosting = true;
+	}
+}
+void Worm::disable_boost()
+{
+	boosting = false;
 }

@@ -2,11 +2,14 @@
 #include "cgmath.h"
 #include "cgut.h"
 
-static const uint	large_sphere_latitude_segment_num = 64;		// horizontal lines
-static const uint	large_sphere_longitude_segment_num = 128;	// vertical lines
+static const uint	large_sphere_latitude_segment_num = 128;	// horizontal lines
+static const uint	large_sphere_longitude_segment_num = 64;	// vertical lines
 
-static const uint	small_sphere_latitude_segment_num = 32;		// horizontal lines
-static const uint	small_sphere_longitude_segment_num = 64;	// vertical lines
+static const uint	small_sphere_latitude_segment_num = 24;		// horizontal lines
+static const uint	small_sphere_longitude_segment_num = 48;	// vertical lines
+
+static const uint	tiny_sphere_latitude_segment_num = 2;		// horizontal lines
+static const uint	tiny_sphere_longitude_segment_num = 4;		// vertical lines
 
 static const uint	orbit_segment_num = 64;
 
@@ -29,3 +32,5 @@ ObjectVertexProperty create_circle_vertex_property();
 ObjectVertexProperty create_large_sphere_vertex_property();
 // Small Sphere vertex property
 ObjectVertexProperty create_small_sphere_vertex_property();
+// Tiny Sphere vertex property
+ObjectVertexProperty create_tiny_sphere_vertex_property();

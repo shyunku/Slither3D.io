@@ -10,6 +10,8 @@ extern CommandConsole console;
 extern GameModerator game_moderator;
 
 const string AI_STATUS_CODE[6] = { "EVADE_BORDER", "DEFENSE", "OFFENSE", "SEEK_PREY", "STANDARD", "NONE_AI" };
+const double TICK_MOMENTUM_FACTOR = 7.2f;
+const float CREATE_WORM_BORDER_RADIUS_FACTOR = 0.85f;
 
 /* -------------------------------------------------------- Worm Body -------------------------------------------------------- */
 
@@ -51,9 +53,6 @@ void Worm::render_head(GLuint shader_program, uint sphere_triangles)
 	uloc = get_validated_uniform_location(shader_program, "model_matrix");
 	glUniformMatrix4fv(uloc, 1, GL_TRUE, head.get_model_matrix());
 
-	uloc = get_validated_uniform_location(shader_program, "is_using_solid_color");
-	glUniform1i(uloc, true);
-
 	uloc = get_validated_uniform_location(shader_program, "solid_color");
 	glUniform4fv(uloc, 1, color);
 
@@ -67,9 +66,6 @@ void Worm::render_body(GLuint shader_program, uint sphere_triangles)
 	{
 		uloc = get_validated_uniform_location(shader_program, "model_matrix");
 		glUniformMatrix4fv(uloc, 1, GL_TRUE, body.at(i).get_model_matrix());
-
-		uloc = get_validated_uniform_location(shader_program, "is_using_solid_color");
-		glUniform1i(uloc, true);
 
 		uloc = get_validated_uniform_location(shader_program, "solid_color");
 		glUniform4fv(uloc, 1, color);
@@ -119,7 +115,8 @@ Worm::worm_(float initial_growth, uint id)
 	this->object_id = id;
 
 	head.direction = initd;
-	float head_pos_rad = randf(0, WORLD_BORDER_RADIUS);
+	float head_pos_rad = randf(0, CREATE_WORM_BORDER_RADIUS_FACTOR * WORLD_BORDER_RADIUS);
+	//float head_pos_rad = 0;
 	head = WormBody(head_pos_rad * get_random_vector(), initd);
 	color = vec4(randf(0.5f, 1), randf(0.5f, 1), randf(0.5f, 1), 1);
 
@@ -141,34 +138,30 @@ void Worm::update(float time_tick)
 		// 1. Evade world border
 		if (!ai_decide)
 		{
-			if (head.pos.length() > (WORLD_BORDER_RADIUS - speed - head.radius))
+			if (head.pos.length() > AVOID_WALL_START_RANGE)
 			{
+				if (ai_status != EVADE_BORDER)
+				{
+					auto_direction_change_period = 0;
+				}
 
-				decided_direction = -head.pos.normalize();
+				elapsed_evade_wall_timestamp += time_tick;
+				if (elapsed_evade_wall_timestamp > auto_direction_change_period)
+				{
+					float pos_rate = (head.pos.length() - AVOID_WALL_START_RANGE) / (WORLD_BORDER_RADIUS - AVOID_WALL_START_RANGE);
+					// More further from origin (more close to border), Probability to avoid wall increases
+					// and more break angle to origin
 
+					elapsed_evade_wall_timestamp = 0;
+					float restrict_angle = (1.f - refinef(pos_rate)) * PI;
+					decided_direction = get_restricted_vector(-head.pos.normalize(), restrict_angle);
+
+					gevent.add(format_string("[%d] Pos_rate: %7.3f %7.3f", object_id, pos_rate, restrict_angle*180/PI));
+
+					auto_direction_change_period = 1.f;
+				}
 				ai_status = EVADE_BORDER;
 				ai_decide = true;
-
-				//float pos_rate = (head.pos.length() - AVOID_WALL_START_RANGE) / (WORLD_BORDER_RADIUS - AVOID_WALL_START_RANGE);
-				//if (rand_fraction() < pos_rate)
-				//{
-				//	// More further from origin (more close to border), Probability to avoid wall increases
-				//	// and more break angle to origin
-
-				//	elapsed_evade_wall_timestamp += time_tick;
-				//	if (elapsed_evade_wall_timestamp > auto_direction_change_period)
-				//	{
-				//		elapsed_evade_wall_timestamp = 0;
-				//		//decided_direction = get_restricted_vector(head.direction, randf(MIN_DIRECTION_CHANGE, MAX_DIRECTION_CHANGE));
-				//		decided_direction = get_restricted_vector(-head.pos.normalize(), PI - pos_rate * PI);
-
-				//		gevent.add(format_string("Pos_rate: %.3f", pos_rate));
-
-				//		auto_direction_change_period = 1.f;
-				//		ai_status = EVADE_BORDER;
-				//		ai_decide = true;
-				//	}
-				//}
 			}
 		}
 		// 2. Defense/Offense others
@@ -194,20 +187,19 @@ void Worm::update(float time_tick)
 				decided_direction = get_random_vector();
 
 				auto_direction_change_period = randf(0.3f, 3.f);
-				ai_status = STANDARD;
-				ai_decide = true;
 			}
+			ai_status = STANDARD;
+			ai_decide = true;
 		}
 	}
 
-	head.direction += (decided_direction - head.direction) * 0.05f;
+	head.direction += (decided_direction - head.direction) * TICK_MOMENTUM_FACTOR * time_tick;
 	head.direction = head.direction.normalize();
 	update_body(time_tick);
 
-	if (head.pos.length() > WORLD_BORDER_RADIUS)
+	if (head.pos.length() > WORLD_BORDER_RADIUS - head.radius)
 	{
-		/*gevent.add("Worm[UID: " + format_string("%3u", object_id) + "] arranged as out of range! (over: " 
-			+ format_string("%8.3f)", head.pos.length() - WORLD_BORDER_RADIUS));*/
+		gevent.add(format_string("[%d] out of range", object_id));
 	}
 
 	// resizing
@@ -273,6 +265,10 @@ void Worm::boost_poof()
 		}
 	}
 }
+bool Worm::is_meetable(worm_ other)
+{
+	return distance(head.pos, other.head.pos) <= (other.get_stretched_length() + get_stretched_length());
+}
 bool Worm::detect_death(worm_ other)
 {
 	if (object_id != other.get_id())
@@ -305,4 +301,8 @@ void Worm::enable_boost()
 void Worm::disable_boost()
 {
 	boosting = false;
+}
+float Worm::get_stretched_length()
+{
+	return head.radius * 2 + body.size() * INITIAL_BODY_GAP;
 }

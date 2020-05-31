@@ -37,20 +37,23 @@
     <Filter Include="Shader Files\text">
       <UniqueIdentifier>{8b47f53f-17bd-45c9-bbfe-6b0d7e255b43}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shader Files\default">
-      <UniqueIdentifier>{b8ef432e-180e-41bb-bf86-7ea7f10532f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\fonts">
       <UniqueIdentifier>{755a6eb1-b016-4bdd-8b56-93d327e0d1a2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Communication">
       <UniqueIdentifier>{331fdd4d-2ff6-4f99-a96a-6f30844e477d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shader Files\glow">
-      <UniqueIdentifier>{93c3de9d-9285-48f6-aaf7-cfa47d5a8203}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\declaration">
       <UniqueIdentifier>{1feb05fb-b6a4-4da5-9d88-00de90c2928f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader Files\wormbody">
+      <UniqueIdentifier>{2d04d681-f301-40c9-afa8-f570e9577812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader Files\prey">
+      <UniqueIdentifier>{93c3de9d-9285-48f6-aaf7-cfa47d5a8203}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader Files\worldborder">
+      <UniqueIdentifier>{6ced3a3e-7902-4427-a91e-cbe296a72cee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -163,17 +166,23 @@
     <None Include="..\bin\shaders\text\text.vert">
       <Filter>Shader Files\text</Filter>
     </None>
-    <None Include="..\bin\shaders\default\default.frag">
-      <Filter>Shader Files\default</Filter>
+    <None Include="..\bin\shaders\wormbody\wormbody.frag">
+      <Filter>Shader Files\wormbody</Filter>
     </None>
-    <None Include="..\bin\shaders\default\default.vert">
-      <Filter>Shader Files\default</Filter>
+    <None Include="..\bin\shaders\wormbody\wormbody.vert">
+      <Filter>Shader Files\wormbody</Filter>
     </None>
-    <None Include="..\bin\shaders\glow\glow.frag">
-      <Filter>Shader Files\glow</Filter>
+    <None Include="..\bin\shaders\glow\prey.frag">
+      <Filter>Shader Files\prey</Filter>
     </None>
-    <None Include="..\bin\shaders\glow\glow.vert">
-      <Filter>Shader Files\glow</Filter>
+    <None Include="..\bin\shaders\glow\prey.vert">
+      <Filter>Shader Files\prey</Filter>
+    </None>
+    <None Include="..\bin\shaders\worldborder\worldborder.frag">
+      <Filter>Shader Files\worldborder</Filter>
+    </None>
+    <None Include="..\bin\shaders\worldborder\worldborder.vert">
+      <Filter>Shader Files\worldborder</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

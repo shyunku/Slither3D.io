@@ -20,6 +20,7 @@ typedef class in_game_object_manager_
 private:
 	ObjectVertexProperty large_sphere_vertex_property;
 	ObjectVertexProperty small_sphere_vertex_property;
+	ObjectVertexProperty tiny_sphere_vertex_property;
 	ObjectVertexProperty circle_vertex_property;
 	uint worm_id = 0U;
 	uint prey_id = 0U;
@@ -29,8 +30,16 @@ public:
 	unordered_map<uint, Prey> preys;
 	WorldBorder world_border = WorldBorder();
 
+	bool worm_collide_switch = false;
+	bool simulate_worms = true;
+
 	in_game_object_manager_();
-	in_game_object_manager_(ovprop large_sphere_vertex_property, ovprop small_sphere_vertex_propery, ovprop circle_vertex_property);
+	in_game_object_manager_(
+		ovprop large_sphere_vertex_property,
+		ovprop small_sphere_vertex_propery,
+		ovprop tiny_sphere_vertex_propery,
+		ovprop circle_vertex_property
+	);
 	void render_all();
 	void update_all(float time_tick);
 	void detect_collision_worms();
@@ -43,6 +52,7 @@ public:
 	void push_player_worm_pair();
 	void remove_worm(uint id);
 	void remove_worms(uint num);
+	void remove_worms_except(uint id);
 	void print_alive_worms();
 	Worm* get_worm_with_id(uint id);
 }InGameObjectManager;

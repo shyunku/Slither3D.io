@@ -32,7 +32,7 @@ private:
 	const float			MIN_BODY_LENGTH = 10;
 	const float			MIN_DIRECTION_CHANGE = PI / 4;
 	const float			MAX_DIRECTION_CHANGE = PI / 2;
-	const float			AVOID_WALL_START_RANGE = WORLD_BORDER_RADIUS * 3 / 4;
+	const float			AVOID_WALL_START_RANGE = WORLD_BORDER_RADIUS * 6 / 7;
 
 	const float			DEFAULT_SPEED = 10.f;
 	const float			BOOST_SPEED_FACTOR = 2.f;
@@ -77,4 +77,6 @@ public:
 	float get_camera_distance();
 	void enable_boost();
 	void disable_boost();
+	bool is_meetable(worm_ other);
+	float get_stretched_length();
 }Worm;

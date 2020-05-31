@@ -164,12 +164,14 @@
     <ClCompile Include="worm.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\bin\shaders\default\default.frag" />
-    <None Include="..\bin\shaders\default\default.vert" />
-    <None Include="..\bin\shaders\glow\glow.frag" />
-    <None Include="..\bin\shaders\glow\glow.vert" />
+    <None Include="..\bin\shaders\glow\prey.frag" />
+    <None Include="..\bin\shaders\glow\prey.vert" />
     <None Include="..\bin\shaders\text\text.frag" />
     <None Include="..\bin\shaders\text\text.vert" />
+    <None Include="..\bin\shaders\worldborder\worldborder.frag" />
+    <None Include="..\bin\shaders\worldborder\worldborder.vert" />
+    <None Include="..\bin\shaders\wormbody\wormbody.frag" />
+    <None Include="..\bin\shaders\wormbody\wormbody.vert" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\consola.ttf" />

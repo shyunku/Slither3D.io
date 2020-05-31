@@ -11,20 +11,30 @@ using ovprop = ObjectVertexProperty;
 typedef unordered_map<uint, Worm> worm_map;
 typedef unordered_map<uint, Prey> prey_map;
 
+const uint initial_worm_num = 1000;
+const uint initial_prey_num = 3000;
+
 InGameObjectManager::in_game_object_manager_() {}
-InGameObjectManager::in_game_object_manager_(ovprop large_sphere_vertex_property, ovprop small_sphere_vertex_propery, ovprop circle_vertex_property)
+InGameObjectManager::in_game_object_manager_(
+	ovprop large_sphere_vertex_property, 
+	ovprop small_sphere_vertex_property, 
+	ovprop tiny_sphere_vertex_property,
+	ovprop circle_vertex_property
+)
 	: large_sphere_vertex_property(large_sphere_vertex_property),
-	small_sphere_vertex_property(small_sphere_vertex_propery),
+	small_sphere_vertex_property(small_sphere_vertex_property),
+	tiny_sphere_vertex_property(tiny_sphere_vertex_property),
 	circle_vertex_property(circle_vertex_property)
 {
-	uint initial_worm_num = 1;
+	// Create Worms
 	for (uint i = 0; i < initial_worm_num - 1; i++)
 	{
 		push_new_worm_pair();
 	}
 	push_player_worm_pair();
 
-	uint initial_prey_num = 13000;
+	
+	// Create Preys
 	for (uint i = 0; i < initial_prey_num; i++)
 	{
 		push_new_prey_rand_pos();
@@ -33,45 +43,51 @@ InGameObjectManager::in_game_object_manager_(ovprop large_sphere_vertex_property
 
 void InGameObjectManager::render_all()
 {
-	extern GLuint default_program;
-	extern GLuint glow_program;
+	extern GLuint worldborder_program;
+	extern GLuint wormbody_program;
+	extern GLuint prey_program;
 
-	set_main_shader(default_program);
+	
 
 	// render world border
+	set_main_shader(worldborder_program);
 	glBindVertexArray(large_sphere_vertex_property.vertex_array_ID);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDisable(GL_CULL_FACE);
-	world_border.render_sphere(default_program, large_sphere_vertex_property.get_triangles_num());
+	world_border.render_sphere(worldborder_program, large_sphere_vertex_property.get_triangles_num());
 
 	// render worms
+	set_main_shader(wormbody_program);
 	glBindVertexArray(small_sphere_vertex_property.vertex_array_ID);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glEnable(GL_CULL_FACE);
+	
 	for (unordered_map<uint, Worm>::iterator iter = worms.begin(); iter != worms.end(); ++iter)
 	{
-		iter->second.render_sphere(default_program, small_sphere_vertex_property.get_triangles_num());
+		iter->second.render_sphere(wormbody_program, small_sphere_vertex_property.get_triangles_num());
 	}
 
 	// render preys
-	set_main_shader(glow_program);
-	glBindVertexArray(small_sphere_vertex_property.vertex_array_ID);
+	set_main_shader(prey_program);
+	glBindVertexArray(tiny_sphere_vertex_property.vertex_array_ID);
 	for (prey_map::iterator iter = preys.begin(); iter != preys.end(); ++iter)
 	{
-		iter->second.render(glow_program, small_sphere_vertex_property.get_triangles_num());
+		iter->second.render(prey_program, tiny_sphere_vertex_property.get_triangles_num());
 	}
 }
 void InGameObjectManager::update_all(float time_tick)
 {
 	// update worms
-	for (unordered_map<uint, Worm>::iterator iter = worms.begin(); iter != worms.end(); ++iter)
+	if (simulate_worms)
 	{
-		iter->second.update(time_tick);
+		for (unordered_map<uint, Worm>::iterator iter = worms.begin(); iter != worms.end(); ++iter)
+		{
+			iter->second.update(time_tick);
+		}
 	}
 	magnet_prey();
-	detect_collision_worms();
+	if(worm_collide_switch) detect_collision_worms();
 	detect_collision_worm_prey();
 }
 void InGameObjectManager::detect_collision_worms() {
@@ -82,6 +98,8 @@ void InGameObjectManager::detect_collision_worms() {
 		// iter2 == other worm - head
 		for (worm_map::iterator iter2 = worms.begin(); iter2 != worms.end();)
 		{
+			// Is in collide range?
+			
 			if (iter1->first != iter2->first)
 			{
 				bool is_dead = iter2->second.detect_death(iter1->second);
@@ -238,6 +256,23 @@ void InGameObjectManager::remove_worms(uint num)
 	}
 
 	console.add(format_string("Killed %d worms.", killed), _VERBOSE_);
+	return;
+}
+void InGameObjectManager::remove_worms_except(uint id)
+{
+	uint killed = 0;
+	for (worm_map::iterator iter = worms.begin(); iter != worms.end();)
+	{
+		if (iter->second.is_player || iter->first == id)
+		{
+			++iter;
+			continue;
+		}
+		iter = worms.erase(iter);
+		killed++;
+	}
+
+	console.add(format_string("Killed %d worms except worm[id=%d]", killed, id), _VERBOSE_);
 	return;
 }
 void InGameObjectManager::print_alive_worms()

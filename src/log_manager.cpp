@@ -165,6 +165,16 @@ void CommandConsole::execute_command()
 		
 		return;
 	}
+	else if (!keyword.compare("exkill"))
+	{
+		if (words != 1)
+		{
+			add("Invalid Parameter. usage: /exkill <except_worm_id>", _WARNING_);
+			return;
+		}
+		game_moderator.ingame_object_manager.remove_worms_except(stoi(command_parser.get_segment(0)));
+		return;
+	}
 	else if (!keyword.compare("alive"))
 	{
 		if (words != 0)
@@ -174,6 +184,66 @@ void CommandConsole::execute_command()
 		}
 		game_moderator.ingame_object_manager.print_alive_worms();
 		return;
+	}
+	else if (!keyword.compare("rule"))
+	{
+		if (words == 0)
+		{
+			add("Invalid Parameter. usage: /rule <rule_name> ...", _WARNING_);
+			return;
+		}
+		string rule_word = command_parser.get_segment(0);
+
+		if (!rule_word.compare("collide_worm"))
+		{
+			if (words != 2)
+			{
+				add("Invalid Parameter. usage: /rule collide_worm <Boolean>", _WARNING_);
+				return;
+			}
+
+			string bool_word = command_parser.get_segment(1);
+
+			switch (check_string_bool(bool_word))
+			{
+			case 1:
+				game_moderator.ingame_object_manager.worm_collide_switch = true;
+				add("Worm Collision Enabled.", _VERBOSE_);
+				return;
+			case -1:
+				game_moderator.ingame_object_manager.worm_collide_switch = false;
+				add("Worm Collision Disabled.", _VERBOSE_);
+				return;
+			case 0:
+				add("Invalid Parameter. usage: /rule collide_worm <Boolean>", _WARNING_);
+				return;
+			}
+		}
+		else if (!rule_word.compare("simulate_worm"))
+		{
+			if (words != 2)
+			{
+				add("Invalid Parameter. usage: /rule simulate_worm <Boolean>", _WARNING_);
+				return;
+			}
+
+			string bool_word = command_parser.get_segment(1);
+
+			switch (check_string_bool(bool_word))
+			{
+			case 1:
+				game_moderator.ingame_object_manager.simulate_worms = true;
+				add("Worm Simulation Enabled.", _VERBOSE_);
+				return;
+			case -1:
+				game_moderator.ingame_object_manager.simulate_worms = false;
+				add("Worm Simulation Disabled.", _VERBOSE_);
+				return;
+			case 0:
+				add("Invalid Parameter. usage: /rule simulate_worm <Boolean>", _WARNING_);
+				return;
+			}
+		}
 	}
 	else if (!keyword.compare("deb"))
 	{
@@ -421,7 +491,7 @@ inline void GameEventLogger::draw_all()
 }
 void GameEventLogger::add(string str)
 {
-	log_history.push_back(get_current_time_string() + " " + str);
+	log_history.push_back(str+ " " +get_current_time_string());
 	if (log_history.size() > MAX_LOG_LIMIT)
 	{
 		log_history.erase(log_history.begin());

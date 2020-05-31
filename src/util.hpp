@@ -11,6 +11,7 @@ float rand_fraction();
 int randi(int LO, int HI);
 inline float distancef(vec3 v1, vec3 v2);
 float refinef(float f);
+int check_string_bool(string str);
 vec3 get_random_vector();
 string format_string(const string fmt, ...);
 string get_current_time_string();

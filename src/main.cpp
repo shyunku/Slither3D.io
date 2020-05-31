@@ -7,15 +7,13 @@
 
 /* --------------------------- Constant Strings  --------------------------- */
 const char*				root_path_str = "../bin/";
-const char*				default_frag_path = "shaders/default/default.frag";
-const char*				default_vert_path = "shaders/default/default.vert";
 
 const char*				font_path = "../bin/resources/fonts/consola.ttf";
 const char*				text_frag_path = "shaders/text/text.frag";
 const char*				text_vert_path = "shaders/text/text.vert";
 
 string					app_name = "Slither3D.io";
-string					version_str = "0.4.1v - Beta";
+string					version_str = "0.5.0v - Beta";
 
 const uint				FPS_LIMIT = 144;
 
@@ -35,7 +33,7 @@ const vec4 console_error = vec4(1.f, .5f, .5f, 1.f);
 const vec4 console_highlighted = vec4(.6f, 1.f, 1.f, 1.f);
 
 /* --------------------------- Constant Ingame  --------------------------- */
-const float						WORLD_BORDER_RADIUS = 100.f;
+const float						WORLD_BORDER_RADIUS = 100.f; //1000.f
 
 /* --------------------------- Global Objects  --------------------------- */
 GLFWwindow*						window = nullptr;
@@ -56,9 +54,10 @@ GameEventLogger					gevent;
 
 
 /* --------------------------- Global Shader Programs  --------------------------- */
-GLuint							default_program;
+GLuint							worldborder_program;
 GLuint							text_program;
-GLuint							glow_program;
+GLuint							wormbody_program;
+GLuint							prey_program;
 
 /* --------------------------- Scene Objects  --------------------------- */
 Player*							player = NULL;
@@ -66,6 +65,7 @@ Player*							player = NULL;
 /* --------------------------- Vertex Properties  --------------------------- */
 ObjectVertexProperty			large_sphere_vertex_property;
 ObjectVertexProperty			small_sphere_vertex_property;
+ObjectVertexProperty			tiny_sphere_vertex_property;
 ObjectVertexProperty			circle_vertex_property;
 
 
@@ -116,6 +116,7 @@ void render()
 	svl.draw(format_string("Growth: %d", int(player->me->growth)));
 	svl.draw(format_string("Head Pos: " + get_vec3_string(player->me->head.pos)));
 	svl.draw(format_string("Look Direction: " + get_vec3_string(player->camera.look_direction)));
+	svl.draw(format_string("Decided Direction: " + get_vec3_string(player->me->decided_direction)));
 	svl.draw(format_string("Move Direction: " + get_vec3_string(player->me->head.direction)));
 	svl.draw(format_string("AI status: %s", player->me->get_ai_status().c_str()));
 
@@ -142,8 +143,9 @@ void initialize_environment()
 	if (!cg_init_extensions(window)) terminate_with_code(2);
 	
 	// Shader Setting
-	default_program = create_shader_program("default");
-	glow_program = create_shader_program("glow");
+	worldborder_program = create_shader_program("worldborder");
+	prey_program = create_shader_program("prey");
+	wormbody_program = create_shader_program("wormbody");
 
 	// GL State Setting
 	set_gl_background_color(background_color);
@@ -168,13 +170,14 @@ void initialize_environment()
 	// Vertex Property Setting
 	large_sphere_vertex_property = create_large_sphere_vertex_property();
 	small_sphere_vertex_property = create_small_sphere_vertex_property();
+	tiny_sphere_vertex_property = create_tiny_sphere_vertex_property();
 	circle_vertex_property = create_circle_vertex_property();
 
 	// Player Init
 	player = new Player();
 
 	// Game Moderator
-	game_moderator = GameModerator(large_sphere_vertex_property, small_sphere_vertex_property, circle_vertex_property);
+	game_moderator = GameModerator(large_sphere_vertex_property, small_sphere_vertex_property, tiny_sphere_vertex_property, circle_vertex_property);
 
 	// Debug
 	player->me->set_fix(true);

@@ -17,7 +17,7 @@ private:
 	float flickering_period;
 	uint object_id;
 	mat4 get_model_matrix();
-	vec4 color = vec4(randf(0.7f, 1), randf(0.7f, 1), randf(0.7f, 1), 1);
+	vec4 color = vec4(randf(0.5f, 1), randf(0.5f, 1), randf(0.5f, 1), 0.6f);
 public:
 	vec3 pos;
 	float radius;

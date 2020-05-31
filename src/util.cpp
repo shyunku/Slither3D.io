@@ -45,6 +45,13 @@ float refinef(float f)
 	}
 }
 
+int check_string_bool(string str)
+{
+	if (!str.compare("true")) return 1;
+	if (!str.compare("false")) return -1;
+	return 0;
+}
+
 vec3 get_random_vector()
 {
 	float theta = randf(0, 1) * 2 * PI;

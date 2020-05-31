@@ -10,6 +10,7 @@
 #include <utility>
 
 extern CommandConsole console;
+extern GameEventLogger gevent;
 extern Player* player;
 
 using ovprop = ObjectVertexProperty;
@@ -94,25 +95,24 @@ public:
 		detect_collision_worm_prey();
 	}
 	void detect_collision_worms() {
-		// iter1 == target worm
-		for (unordered_map<uint, Worm>::iterator iter1 = worms.begin(); iter1 != worms.end(); ++iter1)
+
+		// iter1 == target worm - body
+		for (worm_map::iterator iter1 = worms.begin(); iter1 != worms.end(); ++iter1)
 		{
-			// iter2 == other worm
-			for (unordered_map<uint, Worm>::iterator iter2 = worms.begin(); iter2 != worms.end(); ++iter2)
+			// iter2 == other worm - head
+			for (worm_map::iterator iter2 = worms.begin(); iter2 != worms.end();)
 			{
-				if (iter1->second.get_id() == iter2->second.get_id()) continue;
-				else
+				if (iter1->first != iter2->first)
 				{
-					// iter3 == worm body
-					for (vector<WormBody>::iterator iter3 = iter2->second.body.begin(); iter3 != iter2->second.body.end(); ++iter3)
+					bool is_dead = iter2->second.detect_death(iter1->second);
+					if (is_dead)
 					{
-						if (distance(iter1->second.head.pos, iter3->pos) <= iter1->second.head.radius + iter3->radius)
-						{
-							remove_worm(iter1->second.get_id());
-							break;
-						}
+						gevent.add(format_string("Worm[id=%d] dead by worm[id=%d]", iter2->first, iter1->first));
+						iter2 = worms.erase(iter2);
+						continue;
 					}
 				}
+				iter2++;
 			}
 		}
 	}
@@ -209,6 +209,57 @@ public:
 		worms.erase(iter);
 
 		return;
+	}
+	void remove_worms(uint num)
+	{
+		if (num == -1)
+		{
+			num = worms.size() - 1;
+		}
+		else if (num > worms.size() - 1)
+		{
+			console.add(format_string("You can't kill more than entire worms. Resized to %d (except yourself).", worms.size() - 1), _WARNING_);
+			num = worms.size() - 1;
+		}
+
+		uint killed = 0U;
+		for (worm_map::iterator iter = worms.begin(); iter != worms.end();)
+		{
+			if (iter->second.is_player)
+			{
+				++iter;
+				continue;
+			}
+			iter = worms.erase(iter);
+			if (++killed == num)
+			{
+				break;
+			}
+		}
+
+		console.add(format_string("Killed %d worms.", killed), _VERBOSE_);
+		return;
+	}
+	void print_alive_worms()
+	{
+		uint count = 0;
+		const uint max_print = 7;
+		string msg = format_string("Alive %d worms: ", worms.size());
+		for (worm_map::iterator iter = worms.begin(); iter != worms.end();++iter)
+		{
+			msg.append(format_string("[id=%d]",iter->first));
+			count++;
+			if (count < worms.size() && count < max_print)
+			{
+				msg.append(", ");
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		console.add(msg, _VERBOSE_);
 	}
 	Worm* get_worm_with_id(uint id)
 	{

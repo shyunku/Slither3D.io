@@ -57,7 +57,6 @@ public:
 	float				auto_direction_change_period = 0;
 	float				elapsed_evade_wall_timestamp = 0;
 	float				elapsed_standard_timestamp = 0;
-	
 
 	worm_();
 	worm_(float initial_growth, uint id);
@@ -69,4 +68,5 @@ public:
 	void set_pos(vec3 pos);
 	void set_fix(bool fix);
 	string get_ai_status();
+	bool detect_death(worm_ other);
 }Worm;

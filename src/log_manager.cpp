@@ -131,6 +131,50 @@ void CommandConsole::execute_command()
 		game_moderator.ingame_object_manager.remove_worm(stoi(command_parser.get_segment(0)));
 		return;
 	}
+	else if (!keyword.compare("rkill"))
+	{
+		if (words != 1)
+		{
+			add("Invalid Parameter. usage: /rkill <worm_num> or /rkill all", _WARNING_);
+			return;
+		}
+		try 
+		{
+			uint num = stoi(command_parser.get_segment(0));
+			if (num < 1)
+			{
+				add("Invalid Parameter. worm_num can't be under 1.", _WARNING_);
+				return;
+			}
+			game_moderator.ingame_object_manager.remove_worms(num);
+		}
+		catch (const std::exception& e)
+		{
+			string str = e.what();
+			string arg = command_parser.get_segment(0);
+			if (!arg.compare("all"))
+			{
+				game_moderator.ingame_object_manager.remove_worms(-1);
+			}
+			else
+			{
+				add("Invalid Parameter. Do you mean /rkill all?", _WARNING_);
+				return;
+			}
+		}
+		
+		return;
+	}
+	else if (!keyword.compare("alive"))
+	{
+		if (words != 0)
+		{
+			add("Invalid Parameter. usage: /alive", _WARNING_);
+			return;
+		}
+		game_moderator.ingame_object_manager.print_alive_worms();
+		return;
+	}
 	else if (!keyword.compare("deb"))
 	{
 		return;

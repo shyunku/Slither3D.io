@@ -3,6 +3,7 @@
 #include "glutil.hpp"
 #include "util.hpp"
 #include "log_manager.hpp"
+#include "game_moderator.hpp"
 
 extern GameEventLogger gevent;
 extern CommandConsole console;
@@ -16,6 +17,7 @@ WormBody::worm_body_(vec3 initial_pos, vec3 direction)
 {
 	pos = initial_pos;
 	radius = 0.6f;
+
 	this->direction = direction;
 }
 mat4 WormBody::get_model_matrix()
@@ -250,4 +252,18 @@ void Worm::set_fix(bool fix)
 string Worm::get_ai_status()
 {
 	return AI_STATUS_CODE[ai_status];
+}
+bool Worm::detect_death(worm_ other)
+{
+	if (object_id != other.get_id())
+	{
+		for (vector<WormBody>::iterator iter = other.body.begin(); iter != other.body.end(); ++iter)
+		{
+			if (distance(head.pos, iter->pos) <= (iter->radius + iter->radius))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }

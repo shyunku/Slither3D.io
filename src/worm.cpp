@@ -3,6 +3,7 @@
 #include "util.hpp"
 #include "log_manager.hpp"
 #include "game_moderator.hpp"
+#include "prey.hpp"
 
 extern GameEventLogger gevent;
 extern CommandConsole console;
@@ -210,7 +211,7 @@ void Worm::update(float time_tick)
 	}
 
 	// resizing
-	float new_size = (logf(growth + 200) + 1) / 2 - logf(sqrtf(200));
+	float new_size = (logf(growth + 600) + 1) / 2 - logf(sqrtf(600));
 	head.set_size(new_size);
 	for (vector<WormBody>::iterator iter = body.begin(); iter != body.end(); ++iter)
 	{
@@ -268,7 +269,6 @@ void Worm::boost_poof()
 		}
 	}
 }
-
 bool Worm::detect_death(worm_ other)
 {
 	if (object_id != other.get_id())
@@ -282,4 +282,8 @@ bool Worm::detect_death(worm_ other)
 		}
 	}
 	return false;
+}
+bool Worm::detect_eat_prey(Prey prey)
+{
+	return distance(head.pos, prey.pos) < (head.radius + prey.radius);
 }

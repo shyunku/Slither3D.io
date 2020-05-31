@@ -1,6 +1,6 @@
 #pragma once
-#include "cgut.h"
 #include "cgmath.h"
+#include "cgut.h"
 #include "util.hpp"
 #include "glutil.hpp"
 

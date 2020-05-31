@@ -151,12 +151,14 @@
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="control.cpp" />
+    <ClCompile Include="game_object_manager.cpp" />
     <ClCompile Include="glutil.cpp" />
     <ClCompile Include="log_manager.cpp" />
     <ClCompile Include="objvert.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="gl\glad\glad.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="prey.cpp" />
     <ClCompile Include="text_manager.cpp" />
     <ClCompile Include="util.cpp" />
     <ClCompile Include="worm.cpp" />

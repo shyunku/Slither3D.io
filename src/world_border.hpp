@@ -1,6 +1,6 @@
 #pragma once
-#include "cgut.h"
 #include "cgmath.h"
+#include "cgut.h"
 
 extern const float WORLD_BORDER_RADIUS;
 extern GLuint get_validated_uniform_location(GLuint shader_program, const char* name);

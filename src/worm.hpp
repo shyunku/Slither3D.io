@@ -2,6 +2,8 @@
 #include "cgmath.h"
 #include "cgut.h"
 
+#include "prey.hpp"
+
 using namespace std;
 
 extern const float WORLD_BORDER_RADIUS;
@@ -26,7 +28,7 @@ typedef class worm_
 {
 private:
 	const float			INITIAL_BODY_GAP = 0.6f;
-	const float			BODY_GROWTH = 50.f;
+	const float			BODY_GROWTH = 8.f;
 	const float			MIN_BODY_LENGTH = 10;
 	const float			MIN_DIRECTION_CHANGE = PI / 4;
 	const float			MAX_DIRECTION_CHANGE = PI / 2;
@@ -71,4 +73,5 @@ public:
 	string get_ai_status();
 	void boost_poof();
 	bool detect_death(worm_ other);
+	bool detect_eat_prey(Prey prey);
 }Worm;

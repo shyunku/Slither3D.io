@@ -2,6 +2,7 @@
 
 #include "command.hpp"
 #include "control.hpp"
+#include "glutil.hpp"
 #include "game_moderator.hpp"
 
 /* --------------------------- Constant Strings  --------------------------- */
@@ -14,7 +15,7 @@ const char*				text_frag_path = "shaders/text/text.frag";
 const char*				text_vert_path = "shaders/text/text.vert";
 
 string					app_name = "Slither3D.io";
-string					version_str = "0.3.5v - Beta";
+string					version_str = "0.3.6v - Beta";
 
 const uint				FPS_LIMIT = 144;
 
@@ -109,6 +110,7 @@ void render()
 	svl.blank(2);
 	svl.draw(format_string("Player Worm ID: %d", player->possess_worm));
 	svl.draw(format_string("Alive Worms: %d", game_moderator.ingame_object_manager.worms.size()));
+	svl.draw(format_string("Alive Preys: %d", game_moderator.ingame_object_manager.preys.size()));
 	svl.blank(1);
 	svl.draw(format_string("Intented Worm ID: %d", player->me->get_id()));
 	svl.draw(format_string("Growth: %d", int(player->me->growth)));

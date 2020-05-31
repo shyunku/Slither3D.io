@@ -149,6 +149,12 @@
     <ClCompile Include="objvert.cpp">
       <Filter>Source Files\declaration</Filter>
     </ClCompile>
+    <ClCompile Include="prey.cpp">
+      <Filter>Source Files\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="game_object_manager.cpp">
+      <Filter>Source Files\declaration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\shaders\text\text.frag">

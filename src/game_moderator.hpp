@@ -1,6 +1,7 @@
 #pragma once
 #include "cgmath.h"
 #include "game_object_manager.hpp"
+#include "objvert.hpp"
 
 typedef enum game_mode_code		{ FREE_MODE, CLASSIC_MODE }GameMode;
 typedef enum game_status_code	{ GAMING, RESULTING, SUSPENDING }GameStatus;

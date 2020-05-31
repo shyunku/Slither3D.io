@@ -13,8 +13,8 @@ private:
 	const float BORDER_PADDING_ARRANGE_OFFSET = 0.01f * WORLD_BORDER_RADIUS;
 	const float MAX_RADIUS = 0.3f;
 	const float MIN_RADIUS = 0.1f;
-	const float MAX_AMOUNT = 15.f;
-	const float MIN_AMOUNT = 5.f;
+	const float MAX_AMOUNT = 4.f;
+	const float MIN_AMOUNT = 1.f;
 	float flickering_period;
 	mat4 get_model_matrix()
 	{

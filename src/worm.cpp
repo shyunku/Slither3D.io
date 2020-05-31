@@ -1,5 +1,4 @@
 #include "worm.hpp"
-
 #include "glutil.hpp"
 #include "util.hpp"
 #include "log_manager.hpp"
@@ -7,6 +6,7 @@
 
 extern GameEventLogger gevent;
 extern CommandConsole console;
+extern GameModerator game_moderator;
 
 const string AI_STATUS_CODE[6] = { "EVADE_BORDER", "DEFENSE", "OFFENSE", "SEEK_PREY", "STANDARD", "NONE_AI" };
 
@@ -78,6 +78,7 @@ void Worm::render_body(GLuint shader_program, uint sphere_triangles)
 }
 void Worm::update_body(float time_tick)
 {
+	boost_poof();
 	uint body_num = (uint)(MIN_BODY_LENGTH + growth / BODY_GROWTH);
 	int last_body_growth_rate = int(float(int(growth) % int(BODY_GROWTH)) / BODY_GROWTH);
 	body_num += last_body_growth_rate > 0;
@@ -253,6 +254,21 @@ string Worm::get_ai_status()
 {
 	return AI_STATUS_CODE[ai_status];
 }
+void Worm::boost_poof()
+{
+	if (growth <= 0) return;
+	if (boosting)
+	{
+		growth -= 0.2f;
+		WormBody tail = body.back();
+		int ran = (int)rand();
+		if (ran % 5 == 1) 
+		{
+			game_moderator.ingame_object_manager.push_new_prey_pos(tail.pos);
+		}
+	}
+}
+
 bool Worm::detect_death(worm_ other)
 {
 	if (object_id != other.get_id())

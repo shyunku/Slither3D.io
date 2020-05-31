@@ -151,6 +151,12 @@ public:
 
 		return worm_id++;
 	}
+
+	void push_new_prey_pos(vec3 pos)
+	{
+		Prey prey = Prey(pos);
+		preys.push_back(prey);
+	}
 	pair<uint, uint> push_new_worm_pairs(uint num)
 	{
 		uint start = worm_id;

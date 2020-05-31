@@ -1,6 +1,7 @@
 #pragma once
 #include "cgmath.h"
 #include "cgut.h"
+
 using namespace std;
 
 extern const float WORLD_BORDER_RADIUS;
@@ -68,5 +69,6 @@ public:
 	void set_pos(vec3 pos);
 	void set_fix(bool fix);
 	string get_ai_status();
+	void boost_poof();
 	bool detect_death(worm_ other);
 }Worm;

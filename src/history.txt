@@ -31,7 +31,9 @@ Necessary
 - 난이도 조절 설계
 - 화면 상에 2D 오브젝트 draw 구현 (position: fixed)
 
+Priary
 
+- 
 Optional
 
 - 행성계를 배경으로써, 또는 장애물로써 추가

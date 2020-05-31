@@ -39,6 +39,17 @@ public:
 
 		flickering_period = randf(1.2f, 3.f);
 	}
+	prey_(vec3 target_pos)
+	{
+		float virtual_rad = cbrt(randf(0, 1)) * (WORLD_BORDER_RADIUS - BORDER_PADDING_ARRANGE_OFFSET);
+		vec3 rand_vec = get_random_vector();
+
+		pos = target_pos;
+		radius = randf(MIN_RADIUS, MAX_RADIUS);
+		amount = MIN_AMOUNT + (MAX_AMOUNT - MIN_AMOUNT) * (radius - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS);
+
+		flickering_period = randf(1.2f, 3.f);
+	}
 	void render(GLuint shader_program, uint sphere_triangles)
 	{
 		GLint uloc;

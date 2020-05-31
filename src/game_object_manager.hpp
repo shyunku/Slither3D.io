@@ -150,6 +150,13 @@ public:
 
 		return worm_id++;
 	}
+
+	void push_new_prey_pos(vec3 pos)
+	{
+		Prey prey = Prey(pos);
+		preys.push_back(prey);
+	}
+
 	void push_player_worm_pair()
 	{
 		extern Player* player;

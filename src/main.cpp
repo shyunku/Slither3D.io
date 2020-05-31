@@ -14,7 +14,7 @@ const char*				text_frag_path = "shaders/text/text.frag";
 const char*				text_vert_path = "shaders/text/text.vert";
 
 string					app_name = "Slither3D.io";
-string					version_str = "0.3.0v - Beta";
+string					version_str = "0.3.3v - Beta";
 
 const uint				FPS_LIMIT = 144;
 
@@ -111,6 +111,7 @@ void render()
 	svl.draw(format_string("Alive Worms: %d", game_moderator.ingame_object_manager.worms.size()));
 	svl.blank(1);
 	svl.draw(format_string("Intented Worm ID: %d", player->me->get_id()));
+	svl.draw(format_string("Growth: %d", int(player->me->growth)));
 	svl.draw(format_string("Head Pos: " + get_vec3_string(player->me->head.pos)));
 	svl.draw(format_string("Look Direction: " + get_vec3_string(player->camera.look_direction)));
 	svl.draw(format_string("Move Direction: " + get_vec3_string(player->me->head.direction)));

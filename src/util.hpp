@@ -10,7 +10,7 @@ float rand_direction();
 float rand_fraction();
 int randi(int LO, int HI);
 inline float distancef(vec3 v1, vec3 v2);
-inline float refinef(float f);
+float refinef(float f);
 vec3 get_random_vector();
 string format_string(const string fmt, ...);
 string get_current_time_string();

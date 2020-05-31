@@ -29,7 +29,7 @@ inline float distancef(vec3 v1, vec3 v2)
 	return (v1 - v2).length();
 }
 
-inline float refinef(float f)
+float refinef(float f)
 {
 	if (f > 1)
 	{
@@ -138,6 +138,7 @@ void print_version_of_app()
 
 vec3 get_restricted_vector(vec3 original, float max_difference)
 {
+	float refdef = refinef(max_difference);
 	float co = cosf(max_difference);
 	float so = sinf(max_difference);
 

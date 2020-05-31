@@ -1,5 +1,6 @@
 #include "log_manager.hpp"
 #include "game_moderator.hpp"
+#include <utility>
 
 extern GameModerator game_moderator;
 extern Player* player;
@@ -102,13 +103,22 @@ void CommandConsole::execute_command()
 	}
 	else if (!keyword.compare("spawn"))
 	{
-		if (words != 0)
+		if (words == 0)
 		{
-			add("Invalid Parameter. usage: /spawn", _WARNING_);
+			int id = game_moderator.ingame_object_manager.push_new_worm_pair();
+			add(format_string("Worm Spawned with id=%d", id), _VERBOSE_);
+		}
+		else if (words == 1)
+		{
+			pair<uint, uint> p = game_moderator.ingame_object_manager.push_new_worm_pairs(stoi(command_parser.get_segment(0)));
+			add(format_string("Worm Spawned with id=%d~%d", p.first, p.second), _VERBOSE_);
+		}
+		else
+		{
+			add("Invalid Parameter. usage: /spawn or /spawn <worm_num>", _WARNING_);
 			return;
 		}
-		int id = game_moderator.ingame_object_manager.push_new_worm_pair();
-		add(format_string("Worm Spawned with id=%d", id), _WARNING_);
+		
 		return;
 	}
 	else if (!keyword.compare("kill"))
@@ -119,6 +129,50 @@ void CommandConsole::execute_command()
 			return;
 		}
 		game_moderator.ingame_object_manager.remove_worm(stoi(command_parser.get_segment(0)));
+		return;
+	}
+	else if (!keyword.compare("rkill"))
+	{
+		if (words != 1)
+		{
+			add("Invalid Parameter. usage: /rkill <worm_num> or /rkill all", _WARNING_);
+			return;
+		}
+		try 
+		{
+			uint num = stoi(command_parser.get_segment(0));
+			if (num < 1)
+			{
+				add("Invalid Parameter. worm_num can't be under 1.", _WARNING_);
+				return;
+			}
+			game_moderator.ingame_object_manager.remove_worms(num);
+		}
+		catch (const std::exception& e)
+		{
+			string str = e.what();
+			string arg = command_parser.get_segment(0);
+			if (!arg.compare("all"))
+			{
+				game_moderator.ingame_object_manager.remove_worms(-1);
+			}
+			else
+			{
+				add("Invalid Parameter. Do you mean /rkill all?", _WARNING_);
+				return;
+			}
+		}
+		
+		return;
+	}
+	else if (!keyword.compare("alive"))
+	{
+		if (words != 0)
+		{
+			add("Invalid Parameter. usage: /alive", _WARNING_);
+			return;
+		}
+		game_moderator.ingame_object_manager.print_alive_worms();
 		return;
 	}
 	else if (!keyword.compare("deb"))

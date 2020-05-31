@@ -5,6 +5,9 @@
 #include "log_manager.hpp"
 
 extern GameEventLogger gevent;
+extern CommandConsole console;
+
+const string AI_STATUS_CODE[6] = { "EVADE_BORDER", "DEFENSE", "OFFENSE", "SEEK_PREY", "STANDARD", "NONE_AI" };
 
 /* -------------------------------------------------------- Worm Body -------------------------------------------------------- */
 
@@ -71,15 +74,6 @@ void Worm::render_body(GLuint shader_program, uint sphere_triangles)
 		glDrawElements(GL_TRIANGLES, sphere_triangles, GL_UNSIGNED_INT, nullptr);
 	}
 }
-vec3 Worm::get_restricted_vector(vec3 original, float max_difference)
-{
-	float co = cosf(max_difference);
-	float so = sinf(max_difference);
-	vec3 virtual_x_vector = vec3(1, 1, (co - original.x - original.y) / original.z).normalize();
-	vec3 virtual_y_vector = original.cross(virtual_x_vector).normalize();
-	float virtual_random_angle = rand_direction();
-	return (co * original + so * (cosf(virtual_random_angle) * virtual_x_vector + sinf(virtual_random_angle) * virtual_y_vector)).normalize();
-}
 void Worm::update_body(float time_tick)
 {
 	uint body_num = (uint)(MIN_BODY_LENGTH + growth / BODY_GROWTH);
@@ -112,35 +106,20 @@ void Worm::update_body(float time_tick)
 }
 
 Worm::worm_() {}
-Worm::worm_(float initial_growth)
+Worm::worm_(float initial_growth, uint id)
 {
 	float theta = rand_direction();
 	float alpha = rand_direction();
 	vec3 initd = get_random_vector();
+
+	this->object_id = id;
 
 	head.direction = initd;
 	float head_pos_rad = randf(0, WORLD_BORDER_RADIUS);
 	head = WormBody(head_pos_rad * get_random_vector(), initd);
-	color = vec4(randf(0.2f, 1), randf(0.2f, 1), randf(0.2f, 1), 1);
+	color = vec4(randf(0.5f, 1), randf(0.5f, 1), randf(0.5f, 1), 1);
 
 	growth = initial_growth;
-	UID = format_string("%04d-%04d", randi(0, 10000), randi(0, 10000));
-
-	update_body(0);
-}
-Worm::worm_(vec3 initial_pos, float initial_growth)
-{
-	float theta = rand_direction();
-	float alpha = rand_direction();
-	vec3 initd = get_random_vector();
-
-	head.direction = initd;
-	head = WormBody(initial_pos, initd);
-	color = vec4(randf(0, 1), randf(0, 1), randf(0, 1), 1);
-
-	growth = initial_growth;
-	UID = format_string("%04d-%04d", randi(0, 10000), randi(0, 10000));
-
 	update_body(0);
 }
 void Worm::render_sphere(GLuint shader_program, uint sphere_triangles)
@@ -154,26 +133,27 @@ void Worm::update(float time_tick)
 	{
 		// Enemy worm AI (has priority)
 
-		// 1. Avoid world border
+		// 1. Evade world border
 		if (head.pos.length() > AVOID_WALL_START_RANGE)
 		{
-			float pos_rate = (head.pos.length() - AVOID_WALL_START_RANGE) / (WORLD_BORDER_RADIUS - speed - head.radius - AVOID_WALL_START_RANGE);
+			float pos_rate = (head.pos.length() - AVOID_WALL_START_RANGE) / (WORLD_BORDER_RADIUS - AVOID_WALL_START_RANGE);
 			if (rand_fraction() < pos_rate)
 			{
 				// More further from origin (more close to border), Probability to avoid wall increases
 				// and more break angle to origin
-				decided_direction = get_restricted_vector(-head.direction, PI / 2 * (2 - pos_rate));
+				decided_direction = get_restricted_vector(-head.pos.normalize(), (PI / 2) * (2 - pos_rate));
+				ai_status = EVADE_BORDER;
 			}
 		}
 		// 2. Defense/Offense others
 		else if (false)
 		{
-
+			ai_status = DEFENSE;
 		}
 		// 3. Seek for Prey
 		else if (false)
 		{
-
+			ai_status = SEEK_PREY;
 		}
 		// Last. Standard movement
 		else
@@ -187,6 +167,7 @@ void Worm::update(float time_tick)
 
 				auto_direction_change_period = randf(0.3f, 3.f);
 			}
+			ai_status = STANDARD;
 		}
 	}
 
@@ -196,7 +177,8 @@ void Worm::update(float time_tick)
 
 	if (head.pos.length() > WORLD_BORDER_RADIUS)
 	{
-		gevent.add("Worm[UID: " + UID + "] arranged as out of range! (over: " + to_string(head.pos.length() - WORLD_BORDER_RADIUS));
+		gevent.add("Worm[UID: " + format_string("%3u", object_id) + "] arranged as out of range! (over: " 
+			+ format_string("%8.3f)", head.pos.length() - WORLD_BORDER_RADIUS));
 	}
 
 	// resizing
@@ -210,14 +192,14 @@ void Worm::update(float time_tick)
 void Worm::make_player()
 {
 	is_player = true;
+	ai_status = NONE_AI;
 }
-string Worm::get_uid()
+uint Worm::get_id()
 {
-	return UID;
+	return object_id;
 }
 void Worm::set_speed(float v)
 {
-	extern CommandConsole console;
 	if (v > MAX_SPEED)
 	{
 		speed = MAX_SPEED;
@@ -229,4 +211,18 @@ void Worm::set_speed(float v)
 	}
 
 	console.add(format_string("Player speed set to %.2f.", speed), _VERBOSE_);
+}
+void Worm::set_pos(vec3 pos)
+{
+	head.pos = pos;
+	console.add("Player teleported to " + get_vec3_pair_string(head.pos)+".", _VERBOSE_);
+}
+void Worm::set_fix(bool fix)
+{
+	speed = fix ? 0 : DEFAULT_SPEED;
+	console.add("Player position fixed.", _VERBOSE_);
+}
+string Worm::get_ai_status()
+{
+	return AI_STATUS_CODE[ai_status];
 }

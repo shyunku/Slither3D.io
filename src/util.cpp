@@ -126,7 +126,28 @@ string get_vec3_string(vec3 v)
 	return format_string("(%.2f, %.2f, %.2f)", v.x, v.y, v.z);
 }
 
+string get_vec3_pair_string(vec3 v)
+{
+	return format_string("%.2f, %.2f, %.2f", v.x, v.y, v.z);
+}
+
 void print_version_of_app()
 {
 	cout << app_name << " " << version_str << endl;
+}
+
+vec3 get_restricted_vector(vec3 original, float max_difference)
+{
+	float co = cosf(max_difference);
+	float so = sinf(max_difference);
+
+	vec3 sli = original + vec3(1, 1, 0);
+	vec3 vr = co * sli / (original * sli).sum();
+	
+	vec3 vx = (vr - co * original).normalize();
+	vec3 vy = original.cross(vx).normalize();
+	float virtual_random_angle = randf(0,2*PI);
+	vec3 nm = co * original + so * (cosf(virtual_random_angle) * vx + sinf(virtual_random_angle) * vy);
+	
+	return nm.normalize();
 }

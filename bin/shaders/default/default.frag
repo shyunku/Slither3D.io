@@ -13,5 +13,5 @@ uniform vec4 solid_color;
 
 void main()
 {
-	fragColor = is_using_solid_color ? solid_color : vec4(tc.yyy, 1);
+	fragColor = is_using_solid_color ? solid_color * vec4(tc.yyy, 1): vec4(tc.yyy, 1);
 }

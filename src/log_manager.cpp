@@ -1,4 +1,8 @@
 #include "log_manager.hpp"
+#include "game_moderator.hpp"
+
+extern GameModerator game_moderator;
+extern Player* player;
 
 /* -------------------------------------------------------- Command Console -------------------------------------------------------- */
 void CommandConsole::flush()
@@ -17,23 +21,111 @@ void CommandConsole::execute_command()
 {
 	string keyword = command_parser.get_command_keyword();
 	size_t words = command_parser.get_segment_size_except_keyword();
+	Worm* me = player->me;
 
 	if (!keyword.compare("help") || !keyword.compare("h"))
 	{
-		add("You can use command starting with /.", _VERBOSE_);
+		add("You can use command starting with /.", _HIGHLIGHTED_);
+		add("/tp 30 40 35.5", _VERBOSE_);
+		add("/tp 30 40 35.5", _VERBOSE_);
 		return;
 	}
-	else if (!keyword.compare("setspeed"))
+	else if (!keyword.compare("setv"))
 	{
-		extern Player* player;
 		if (words != 1)
 		{
-			add("Invalid Parameter. usage: /setspeed <speed>", _WARNING_);
+			add("Invalid Parameter. usage: /setv <speed>", _WARNING_);
 			return;
 		}
-		player->me->set_speed(stof(command_parser.get_segment(0)));
+		me->set_speed(stof(command_parser.get_segment(0)));
 		return;
 	}
+	else if (!keyword.compare("tp"))
+	{
+		
+		if (words != 3)
+		{
+			add("Invalid Parameter. usage: /tp <x> <y> <z>", _WARNING_);
+			return;
+		}
+		float xf = stof(command_parser.get_segment(0));
+		float yf = stof(command_parser.get_segment(1));
+		float zf = stof(command_parser.get_segment(2));
+
+		me->set_pos(vec3(xf, yf, zf));
+		return;
+	}
+	else if (!keyword.compare("fix") || !keyword.compare("unfix"))
+	{
+		if (words == 0)
+		{
+			if (!keyword.compare("fix"))
+			{
+				me->set_fix(true);
+				return;
+			}
+			me->set_fix(false);
+			return;
+		}
+		else if (words == 1)
+		{
+			if (!command_parser.get_segment(0).compare("true"))
+			{
+				me->set_fix(true);
+				return;
+			}
+			else if (!command_parser.get_segment(0).compare("false"))
+			{
+				me->set_fix(false);
+				return;
+			}
+		}
+		else
+		{
+			add("Invalid parameter. usage: /fix <Boolean> or /fix", _WARNING_);
+			return;
+		}
+	}
+	else if (!keyword.compare("intent"))
+	{
+		if (words != 1)
+		{
+			add("Invalid Parameter. usage: /intent <id>", _WARNING_);
+			return;
+		}
+		Worm* intenting_worm = game_moderator.ingame_object_manager.get_worm_with_id(stoi(command_parser.get_segment(0)));
+		if (intenting_worm)
+		{
+			player->intent_other(intenting_worm);
+		}
+		return;
+	}
+	else if (!keyword.compare("spawn"))
+	{
+		if (words != 0)
+		{
+			add("Invalid Parameter. usage: /spawn", _WARNING_);
+			return;
+		}
+		int id = game_moderator.ingame_object_manager.push_new_worm_pair();
+		add(format_string("Worm Spawned with id=%d", id), _WARNING_);
+		return;
+	}
+	else if (!keyword.compare("kill"))
+	{
+		if (words != 1)
+		{
+			add("Invalid Parameter. usage: /kill <id>", _WARNING_);
+			return;
+		}
+		game_moderator.ingame_object_manager.remove_worm(stoi(command_parser.get_segment(0)));
+		return;
+	}
+	else if (!keyword.compare("deb"))
+	{
+		return;
+	}
+
 	add("No command keyword for '" + keyword + "'", _WARNING_);
 	add("Try /help or /h to see how to use.", _HIGHLIGHTED_);
 }
@@ -97,6 +189,14 @@ void CommandConsole::remove_expired()
 void CommandConsole::activate()
 {
 	listener_switch = true;
+}
+void CommandConsole::disable_keylistener()
+{
+	key_listener_disabler = true;
+}
+void CommandConsole::enable_keylistener()
+{
+	key_listener_disabler = false;
 }
 void CommandConsole::complete()
 {

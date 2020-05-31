@@ -43,7 +43,7 @@ void mouse_motion_event_listener(GLFWwindow* window, double x, double y)
 void key_type_event_listener(GLFWwindow* window, GLuint codepoint)
 {
 	extern CommandConsole console;
-	if (console.listener_switch)
+	if (console.listener_switch && !console.key_listener_disabler)
 	{
 		console.append(char(codepoint));
 	}
@@ -81,6 +81,15 @@ void keyboard_event_listener(GLFWwindow* window, int key, int scancode, int acti
 				break;
 			}
 		}
+		else if (action == GLFW_RELEASE)
+		{
+			switch (key)
+			{
+			case GLFW_KEY_T:
+				console.enable_keylistener();
+				break;
+			}
+		}
 	}
 	else if (key == GLFW_KEY_SLASH && action == GLFW_PRESS)
 	{
@@ -112,6 +121,10 @@ void keyboard_event_listener(GLFWwindow* window, int key, int scancode, int acti
 			break;
 		case GLFW_KEY_D:
 			keypress_tracker.KEY_D = true;
+			break;
+		case GLFW_KEY_T:
+			console.activate();
+			console.disable_keylistener();
 			break;
 		case GLFW_KEY_F11:
 			use_fullscreen = !use_fullscreen;

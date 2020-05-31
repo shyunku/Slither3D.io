@@ -214,6 +214,8 @@ template <class T> struct tvec3
 	float_memfun(U) inline T dot( const tvec3& v ) const { return (T)(r*v.r+g*v.g+b*v.b); }
 	float_memfun(U) inline T length2() const { return (T)(r*r+g*g+b*b);}
 
+	inline T sum() const { return (T)(r + g + b); }
+
 	// tvec3 only: cross product
 	float_memfun(U) inline tvec3 cross( const tvec3& v ) const { return tvec3( g*v.b-b*v.g, b*v.r-r*v.b, r*v.g-g*v.r); }
 };

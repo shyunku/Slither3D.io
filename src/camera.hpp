@@ -9,7 +9,7 @@ typedef class camera_
 private:
 	const float		fov = PI / 4.0f;
 	const float		dNear = 1.0f;
-	const float		dFar = WORLD_BORDER_RADIUS * 3;
+	const float		dFar = WORLD_BORDER_RADIUS * 10;
 	float			aspect_ratio;
 
 	inline void revalidate_all();

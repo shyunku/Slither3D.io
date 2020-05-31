@@ -18,4 +18,6 @@ void logger(const string fmt, ...);
 void print_vec3(vec3 v, const char* msg);
 void print_vec3(vec3 v);
 string get_vec3_string(vec3 v);
+string get_vec3_pair_string(vec3 v);
 void print_version_of_app();
+vec3 get_restricted_vector(vec3 original, float max_difference);

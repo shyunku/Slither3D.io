@@ -17,3 +17,12 @@ void Player::set_move_direction()
 {
 	me->decided_direction = camera.look_direction.normalize();
 }
+void Player::set_player(Worm* worm, uint index)
+{
+	me = worm;
+	possess_worm = index;
+}
+void Player::intent_other(Worm* worm)
+{
+	me = worm;
+}

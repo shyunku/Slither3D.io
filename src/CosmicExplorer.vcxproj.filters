@@ -146,6 +146,9 @@
     <ClCompile Include="gl\glad\glad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="objvert.cpp">
+      <Filter>Source Files\declaration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\shaders\text\text.frag">

@@ -5,6 +5,8 @@ using namespace std;
 
 extern const float WORLD_BORDER_RADIUS;
 
+typedef enum ai_status_ { EVADE_BORDER, DEFENSE, OFFENSE, SEEK_PREY, STANDARD, NONE_AI }AI_STATUS;
+
 typedef class worm_body_
 {
 public:
@@ -33,11 +35,10 @@ private:
 	const float			BOOST_SPEED_FACTOR = 2.f;
 	const float			MAX_SPEED = 200.f;
 	vec4				color;
-	string				UID;
+	uint				object_id;
 	vector<WormBody>	body;
 	void render_head(GLuint shader_program, uint sphere_triangles);
 	void render_body(GLuint shader_program, uint sphere_triangles);
-	vec3 get_restricted_vector(vec3 original, float max_difference);
 	void update_body(float time_tick);
 public:
 	float				speed = DEFAULT_SPEED;
@@ -47,16 +48,19 @@ public:
 	float				growth;
 
 	// AI area
+	AI_STATUS			ai_status = STANDARD;
 	float				auto_direction_change_period = 0;
 	float				elapsed_direction_change_timestamp = 0;
 	vec3				decided_direction = vec3(0);
 
 	worm_();
-	worm_(float initial_growth);
-	worm_(vec3 initial_pos, float initial_growth);
+	worm_(float initial_growth, uint id);
 	void render_sphere(GLuint shader_program, uint sphere_triangles);
 	void update(float time_tick);
 	void make_player();
-	string get_uid();
+	uint get_id();
 	void set_speed(float v);
+	void set_pos(vec3 pos);
+	void set_fix(bool fix);
+	string get_ai_status();
 }Worm;

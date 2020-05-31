@@ -14,7 +14,7 @@ const char*				text_frag_path = "shaders/text/text.frag";
 const char*				text_vert_path = "shaders/text/text.vert";
 
 string					app_name = "Slither3D.io";
-string					version_str = "0.2.6v - Beta";
+string					version_str = "0.3.0v - Beta";
 
 const uint				FPS_LIMIT = 144;
 
@@ -28,13 +28,13 @@ const vec4 light_red = vec4(1.f, 0.3f, 0.3f, 1.f);
 const vec4 standard_log = vec4(1.f, 1.f, 1.f, 0.7f);
 const vec4 event_log = vec4(1.f, 0.9f, 0.6f, 0.7f);
 
-const vec4 console_verbose = vec4(.7f, .7f, .7f, 1.f);
-const vec4 console_warning = vec4(.9f, .9f, .5f, 1.f);
-const vec4 console_error = vec4(1.f, .4f, .4f, 1.f);
-const vec4 console_highlighted = vec4(.5f, .9f, 1.f, 1.f);
+const vec4 console_verbose = vec4(1.f, 1.f, 1.f, 1.f);
+const vec4 console_warning = vec4(1.f, 1.f, .6f, 1.f);
+const vec4 console_error = vec4(1.f, .5f, .5f, 1.f);
+const vec4 console_highlighted = vec4(.6f, 1.f, 1.f, 1.f);
 
 /* --------------------------- Constant Ingame  --------------------------- */
-const float						WORLD_BORDER_RADIUS = 1000.f;
+const float						WORLD_BORDER_RADIUS = 100.f;
 
 /* --------------------------- Global Objects  --------------------------- */
 GLFWwindow*						window = nullptr;
@@ -104,8 +104,17 @@ void render()
 	svl.draw(format_string("Update time tick: %.4fs", time_tick));
 	svl.draw(format_string("FPS: %d", int(fFPS)));
 	svl.blank(1);
+	svl.draw("Console Listener: " + format_string(console.listener_switch ? "true" : "false"));
+	svl.draw("Console KeyListener Disabler: " + format_string(console.key_listener_disabler ? "true" : "false"));
+	svl.blank(2);
+	svl.draw(format_string("Player Worm ID: %d", player->possess_worm));
+	svl.draw(format_string("Alive Worms: %d", game_moderator.ingame_object_manager.worms.size()));
+	svl.blank(1);
+	svl.draw(format_string("Intented Worm ID: %d", player->me->get_id()));
+	svl.draw(format_string("Head Pos: " + get_vec3_string(player->me->head.pos)));
 	svl.draw(format_string("Look Direction: " + get_vec3_string(player->camera.look_direction)));
 	svl.draw(format_string("Move Direction: " + get_vec3_string(player->me->head.direction)));
+	svl.draw(format_string("AI status: %s", player->me->get_ai_status().c_str()));
 
 	// Game Event Log Panel
 	gevent.draw_all();
@@ -158,13 +167,19 @@ void initialize_environment()
 	small_sphere_vertex_property = create_small_sphere_vertex_property();
 	circle_vertex_property = create_circle_vertex_property();
 
+	// Player Init
+	player = new Player();
+
 	// Game Moderator
 	game_moderator = GameModerator(large_sphere_vertex_property, small_sphere_vertex_property, circle_vertex_property);
 
-	player = std::move(new Player(game_moderator.ingame_object_manager.get_player()));
+	// Debug
+	player->me->set_fix(true);
+	player->me->set_pos(vec3(150, 0, 150));
 
 
 	// Initial User Action
+	srand((unsigned)time(NULL));
 	print_version_of_app();
 	keypress_tracker =
 	{

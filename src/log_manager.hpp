@@ -135,12 +135,15 @@ private:
 	void execute_command();
 public:
 	bool listener_switch = false;
+	bool key_listener_disabler = false;
 
 	command_virtual_window_drawer_();
 	virtual inline void draw_all();
 	void add(string content, SystemAnnounceLevel level);
 	void remove_expired();
 	void activate();
+	void disable_keylistener();
+	void enable_keylistener();
 	void complete();
 	void cancel();
 	void append(char c);

@@ -14,7 +14,7 @@ const char*				text_frag_path = "shaders/text/text.frag";
 const char*				text_vert_path = "shaders/text/text.vert";
 
 string					app_name = "Slither3D.io";
-string					version_str = "0.3.3v - Beta";
+string					version_str = "0.3.5v - Beta";
 
 const uint				FPS_LIMIT = 144;
 

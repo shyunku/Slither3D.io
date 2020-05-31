@@ -243,7 +243,7 @@ public:
 	void print_alive_worms()
 	{
 		uint count = 0;
-		const uint max_print = 7;
+		const uint max_print = 5;
 		string msg = format_string("Alive %d worms: ", worms.size());
 		for (worm_map::iterator iter = worms.begin(); iter != worms.end();++iter)
 		{
@@ -255,6 +255,10 @@ public:
 			}
 			else
 			{
+				if (max_print < worms.size())
+				{
+					msg.append(" ...");
+				}
 				break;
 			}
 		}

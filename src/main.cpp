@@ -31,7 +31,7 @@ const vec4 console_error = vec4(1.f, .5f, .5f, 1.f);
 const vec4 console_highlighted = vec4(.6f, 1.f, 1.f, 1.f);
 
 /* --------------------------- Constant Ingame  --------------------------- */
-const float						WORLD_BORDER_RADIUS = 100.f; //1000.f
+const float						WORLD_BORDER_RADIUS = 300.f; //1000.f
 
 /* --------------------------- Global Objects  --------------------------- */
 GLFWwindow*						window = nullptr;
@@ -90,6 +90,9 @@ void render()
 
 	// Score, Growth
 	draw_centered_string(to_string(int(player->score)), window_size.x / 2, window_size.y / 9, window_size.y / 700.f, vec4(1,1,1,0.4f));
+
+	// Scoreboard
+
 
 	// App Information Draw
 	ail.draw(app_name + " " + version_str);

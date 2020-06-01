@@ -3,6 +3,7 @@
 #include "cgut.h"
 
 #include "prey.hpp"
+#include <unordered_map>
 
 using namespace std;
 
@@ -32,7 +33,7 @@ private:
 	const float			MIN_BODY_LENGTH = 10;
 	const float			MIN_DIRECTION_CHANGE = PI / 4;
 	const float			MAX_DIRECTION_CHANGE = PI / 2;
-	const float			AVOID_WALL_START_RANGE = WORLD_BORDER_RADIUS * 6 / 7;
+	const float			AVOID_WALL_START_RANGE = WORLD_BORDER_RADIUS * 2 / 3;
 
 	const float			DEFAULT_SPEED = 10.f;
 	const float			BOOST_SPEED_FACTOR = 2.f;
@@ -64,7 +65,7 @@ public:
 	worm_();
 	worm_(float initial_growth, uint id);
 	void render_sphere(GLuint shader_program, uint sphere_triangles);
-	void update(float time_tick);
+	void update(float time_tick, unordered_map<uint, Prey> preys);
 	void make_player();
 	uint get_id();
 	void set_speed(float v);
@@ -72,6 +73,7 @@ public:
 	void set_fix(bool fix);
 	string get_ai_status();
 	void boost_poof();
+	void poof();
 	bool detect_death(worm_ other);
 	bool detect_eat_prey(Prey prey);
 	float get_camera_distance();

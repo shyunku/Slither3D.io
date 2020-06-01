@@ -11,7 +11,7 @@ extern Player* player;
 
 void mouse_wheel_event_listener(GLFWwindow* window, double xoffset, double yoffset)
 {
-	player->control_factor(yoffset);
+	player->control_factor(-yoffset);
 }
 
 void mouse_click_event_listener(GLFWwindow* window, int button, int action, int mods)
@@ -22,14 +22,14 @@ void mouse_click_event_listener(GLFWwindow* window, int button, int action, int 
 		{
 			if (player->me->get_id() == player->possess_worm)
 			{
-				player->me->boosting = true;
+				player->me->enable_boost();
 			}
 		}
 		else if(action == GLFW_RELEASE)
 		{
 			if (player->me->get_id() == player->possess_worm)
 			{
-				player->me->boosting = false;
+				player->me->disable_boost();
 			}
 		}
 	}

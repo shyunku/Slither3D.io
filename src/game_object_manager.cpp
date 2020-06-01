@@ -11,8 +11,10 @@ using ovprop = ObjectVertexProperty;
 typedef unordered_map<uint, Worm> worm_map;
 typedef unordered_map<uint, Prey> prey_map;
 
-const uint initial_worm_num = 1;		// 100
-const uint initial_prey_num = 3000;		// 100000
+const uint initial_worm_num = 1;			// 100
+const uint initial_prey_num = 10000;		// 100000
+
+const uint SCOREBOARD_NUM = 6;
 
 InGameObjectManager::in_game_object_manager_() {}
 InGameObjectManager::in_game_object_manager_(
@@ -84,13 +86,14 @@ void InGameObjectManager::update_all(float time_tick)
 	{
 		for (unordered_map<uint, Worm>::iterator iter = worms.begin(); iter != worms.end(); ++iter)
 		{
-			iter->second.update(time_tick);
+			iter->second.update(time_tick, preys);
 		}
 	}
 	magnet_prey();
 	if(worm_collide_switch) detect_collision_worms();
 	detect_collision_worm_prey();
 }
+
 void InGameObjectManager::detect_collision_worms() {
 	// iter1 == target worm - body
 	for (worm_map::iterator iter1 = worms.begin(); iter1 != worms.end(); ++iter1)

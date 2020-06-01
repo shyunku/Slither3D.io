@@ -4,6 +4,7 @@
 #include "log_manager.hpp"
 #include "game_moderator.hpp"
 #include "prey.hpp"
+#include <unordered_map>
 
 extern GameEventLogger gevent;
 extern CommandConsole console;
@@ -12,6 +13,7 @@ extern GameModerator game_moderator;
 const string AI_STATUS_CODE[6] = { "EVADE_BORDER", "DEFENSE", "OFFENSE", "SEEK_PREY", "STANDARD", "NONE_AI" };
 const double TICK_MOMENTUM_FACTOR = 7.2f;
 const float CREATE_WORM_BORDER_RADIUS_FACTOR = 0.85f;
+const float POOF_STACK_MAX_GAGE = 2.0f;
 
 /* -------------------------------------------------------- Worm Body -------------------------------------------------------- */
 
@@ -132,7 +134,7 @@ void Worm::render_sphere(GLuint shader_program, uint sphere_triangles)
 	render_head(shader_program, sphere_triangles);
 	render_body(shader_program, sphere_triangles);
 }
-void Worm::update(float time_tick)
+void Worm::update(float time_tick, unordered_map<uint, Prey> preys)
 {
 	if (!is_player)
 	{
@@ -165,7 +167,7 @@ void Worm::update(float time_tick)
 					auto_direction_change_period = 1.f;
 				}
 				ai_status = EVADE_BORDER;
-				ai_decide = true;
+				//ai_decide = true;
 			}
 		}
 		// 2. Defense/Offense others
@@ -174,11 +176,32 @@ void Worm::update(float time_tick)
 			ai_status = DEFENSE;
 			//ai_decide = true;
 		}
-		// 3. Seek for Prey
+		// 3. Seek for Prey & boost
 		if (!ai_decide)
 		{
-			ai_status = SEEK_PREY;
-			//ai_decide = true;
+			float min_dist = 1000000.f;
+			bool found_prey = false;
+			vec3 closest_pos;
+			for (unordered_map<uint, Prey>::iterator iter = preys.begin(); iter != preys.end(); ++iter)
+			{
+				float dist = distance(iter->second.pos, head.pos);
+				if (dist < 10 * head.radius)
+				{
+					if (dist < min_dist)
+					{
+						min_dist = dist;
+						closest_pos = iter->second.pos;
+						found_prey = true;
+					}
+				}
+			}
+
+			if (found_prey)
+			{
+				decided_direction = (closest_pos - head.pos).normalize();
+				ai_status = SEEK_PREY;
+				ai_decide = true;
+			}
 		}
 		// Last. Standard movement
 		if (!ai_decide)
@@ -190,7 +213,7 @@ void Worm::update(float time_tick)
 				//decided_direction = get_restricted_vector(head.direction, randf(MIN_DIRECTION_CHANGE, MAX_DIRECTION_CHANGE));
 				decided_direction = get_random_vector();
 
-				auto_direction_change_period = randf(0.3f, 3.f);
+				auto_direction_change_period = randf(0.3f, 7.f);
 			}
 			ai_status = STANDARD;
 			ai_decide = true;
@@ -214,9 +237,9 @@ void Worm::update(float time_tick)
 		iter->set_size(new_size);
 	}
 
-	if (growth < 0)
+	if (boosting && growth <= 0)
 	{
-		growth = 0;
+		disable_boost();
 	}
 }
 void Worm::make_player()
@@ -258,22 +281,28 @@ string Worm::get_ai_status()
 }
 void Worm::boost_poof()
 {
+	static float poof_gage = 0;
 	if (boosting && growth > 0)
 	{
-		growth -= 0.2f;
-		if (growth < 0)
-		{
-			growth = 0;
-			return;
-		}
+		poof_gage += 0.1f;
 
-		WormBody tail = body.back();
-		int ran = (int)rand();
-		if (ran % 5 == 1) 
+		if (poof_gage >= POOF_STACK_MAX_GAGE)
 		{
-			game_moderator.ingame_object_manager.push_new_prey_pos(tail.pos);
+			poof_gage -= POOF_STACK_MAX_GAGE;
+			poof();
 		}
 	}
+}
+void Worm::poof()
+{
+	growth -= POOF_STACK_MAX_GAGE;
+	if (growth < 0)
+	{
+		growth = 0;
+		return;
+	}
+	WormBody tail = body.back();
+	game_moderator.ingame_object_manager.push_new_prey_pos(tail.pos);
 }
 bool Worm::is_meetable(worm_ other)
 {
@@ -305,6 +334,7 @@ void Worm::enable_boost()
 {
 	if (growth > 0)
 	{
+		poof();
 		boosting = true;
 	}
 }

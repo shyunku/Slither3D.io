@@ -1,4 +1,9 @@
-# CosmicExplorer
-## Introduction
+# Slither3D.io
+## Description
 This project is made for OpenGL assignment project as 3D Game.\
-"Cosmic Explorer" is simple 3D Game which player has goal to clear stage, or just feel free to explore our vast, beautiful, virtual universe.
+"Slither3D.io" is simple 3D Game which player has goal to grow up and beat others (AI).\
+The idea of this game was came up with inspiration of Game "[slither.io](slither.io)".
+## Installation
+install description
+## Support
+support description

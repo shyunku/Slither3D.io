@@ -95,6 +95,7 @@ typedef class static_value_drawer_ : public StackLogManager
 public:
 	static_value_drawer_();
 	inline void draw(string str);
+	void draw(string str, vec4 color);
 }StaticValueLogger;
 
 /*

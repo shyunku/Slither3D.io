@@ -245,10 +245,32 @@ void CommandConsole::execute_command()
 			}
 		}
 	}
-	else if (!keyword.compare("deb"))
+	else if (!keyword.compare("growth"))
 	{
-		player->me->growth = stof(command_parser.get_segment(0));
-		return;
+		if (words != 2)
+		{
+			add("Invalid Parameter. usage: /growth <set/add> <amount>", _WARNING_);
+			return;
+		}
+
+		string sec_word = command_parser.get_segment(0);
+		float amount = stof(command_parser.get_segment(1));
+
+		if (!sec_word.compare("set"))
+		{
+			player->me->growth = amount;
+			return;
+		}
+		else if (!sec_word.compare("add"))
+		{
+			player->me->growth += amount;
+			return;
+		}
+		else
+		{
+			add("Invalid Parameter. usage: /growth <set/add> <amount>", _WARNING_);
+			return;
+		}
 	}
 
 	add("No command keyword for '" + keyword + "'", _WARNING_);
@@ -468,6 +490,19 @@ inline void StaticValueLogger::draw(string str)
 		Y_MIN_OFFSET + LINE_GAP_HEIGHT * stack_index++,
 		text_size,
 		standard_log
+	);
+}
+
+void StaticValueLogger::draw(string str, vec4 color)
+{
+	extern ivec2 window_size;
+	draw_string
+	(
+		str,
+		(GLint)(window_size.x - X_MIN_OFFSET - get_string_width(str, text_size)),
+		Y_MIN_OFFSET + LINE_GAP_HEIGHT * stack_index++,
+		text_size,
+		color
 	);
 }
 

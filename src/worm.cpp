@@ -14,6 +14,7 @@ const string AI_STATUS_CODE[6] = { "EVADE_BORDER", "DEFENSE", "OFFENSE", "SEEK_P
 const double TICK_MOMENTUM_FACTOR = 7.2f;
 const float CREATE_WORM_BORDER_RADIUS_FACTOR = 0.85f;
 const float POOF_STACK_MAX_GAGE = 2.0f;
+const float SEEK_PREY_RANGE = 8.0f;
 
 /* -------------------------------------------------------- Worm Body -------------------------------------------------------- */
 
@@ -36,10 +37,15 @@ void WormBody::move(float move_dist)
 {
 	pos += direction * move_dist;
 }
-void WormBody::track_parent(vec3 parent_pos)
+void WormBody::track_parent(vec3 parent_pos, float body_gap)
 {
 	direction = (parent_pos - pos).normalize();
-	pos = parent_pos - direction * radius * 0.8f;
+	pos = parent_pos - direction * body_gap;
+}
+void WormBody::track_parent(vec3 parent_pos, float body_gap, float rate)
+{
+	direction = (parent_pos - pos).normalize();
+	pos = parent_pos - direction * body_gap * rate;
 }
 void WormBody::set_size(float size)
 {
@@ -82,7 +88,7 @@ void Worm::update_body(float time_tick)
 {
 	boost_poof();
 	uint body_num = (uint)(MIN_BODY_LENGTH + growth / BODY_GROWTH);
-	int last_body_growth_rate = int(float(int(growth) % int(BODY_GROWTH)) / BODY_GROWTH);
+	float last_body_growth_rate = float(int(growth) % int(BODY_GROWTH)) / BODY_GROWTH;
 	body_num += last_body_growth_rate > 0;
 	uint cur_size = body.size();
 
@@ -101,13 +107,16 @@ void Worm::update_body(float time_tick)
 	}
 
 	// revalidate children pos
-
 	head.move(time_tick * speed * (boosting ? BOOST_SPEED_FACTOR : 1));
-	for (vector<WormBody>::iterator iter = body.begin(); iter < body.end(); ++iter)
+	for (vector<WormBody>::iterator iter = body.begin(); iter < body.end() - 1; ++iter)
 	{
 		WormBody parent = iter == body.begin() ? head : *(iter - 1);
-		iter->track_parent(parent.pos);
+		iter->track_parent(parent.pos, get_body_gap());
 	}
+
+	// tail
+	// assert there are at least 2 parents with MIN_BODY_LENGTH
+	(body.end() - 1)->track_parent((body.end() - 2)->pos, get_body_gap(), last_body_growth_rate);
 }
 
 Worm::worm_() {}
@@ -138,38 +147,64 @@ void Worm::update(float time_tick, unordered_map<uint, Prey> preys)
 {
 	if (!is_player)
 	{
+		static bool allow_other_ai = true;
 		bool ai_decide = false;
 		// Enemy worm AI (has priority)
 
-		// 1. Evade world border
-		if (!ai_decide)
+		// 1. Evade world border - check range
+		elapsed_evade_wall_timestamp += time_tick;
+		if (elapsed_evade_wall_timestamp > force_direction_change_period)
 		{
-			if (head.pos.length() > AVOID_WALL_START_RANGE)
+			elapsed_evade_wall_timestamp = 0;
+
+			// Check range
+			if (head.pos.length() > (WORLD_BORDER_RADIUS - speed - head.radius))
 			{
-				if (ai_status != EVADE_BORDER)
-				{
-					auto_direction_change_period = 0;
-				}
+				decided_direction = - head.pos.normalize();
 
-				elapsed_evade_wall_timestamp += time_tick;
-				if (elapsed_evade_wall_timestamp > auto_direction_change_period)
-				{
-					float pos_rate = (head.pos.length() - AVOID_WALL_START_RANGE) / (WORLD_BORDER_RADIUS - AVOID_WALL_START_RANGE);
-					// More further from origin (more close to border), Probability to avoid wall increases
-					// and more break angle to origin
-
-					elapsed_evade_wall_timestamp = 0;
-					float restrict_angle = (1.f - refinef(pos_rate)) * PI;
-					decided_direction = get_restricted_vector(-head.pos.normalize(), restrict_angle);
-
-					//gevent.add(format_string("[%d] Pos_rate: %7.3f %7.3f", object_id, pos_rate, restrict_angle*180/PI));
-
-					auto_direction_change_period = 1.f;
-				}
 				ai_status = EVADE_BORDER;
-				//ai_decide = true;
+				ai_decide = true;
+				allow_other_ai = false;
+			}
+			else
+			{
+				allow_other_ai = true;
 			}
 		}
+		else if(!allow_other_ai)
+		{
+			// lock other ai
+			ai_status = EVADE_BORDER;
+			ai_decide = true;
+		}
+			
+
+		//if (ai_status != EVADE_BORDER)
+		//{
+		//	auto_direction_change_period = 0;
+		//}
+
+		//if (head.pos.length() > AVOID_WALL_START_RANGE)
+		//{
+		//	elapsed_evade_wall_timestamp += time_tick;
+		//	if (elapsed_evade_wall_timestamp > auto_direction_change_period)
+		//	{
+		//		float pos_rate = (head.pos.length() - AVOID_WALL_START_RANGE) / (WORLD_BORDER_RADIUS - AVOID_WALL_START_RANGE);
+		//		// More further from origin (more close to border), Probability to avoid wall increases
+		//		// and more break angle to origin
+
+		//		elapsed_evade_wall_timestamp = 0;
+		//		float restrict_angle = (1.f - refinef(pos_rate)) * PI;
+		//		decided_direction = get_restricted_vector(-head.pos.normalize(), restrict_angle);
+
+		//		//gevent.add(format_string("[%d] Pos_rate: %7.3f %7.3f", object_id, pos_rate, restrict_angle*180/PI));
+
+		//		auto_direction_change_period = 1.f;
+		//	}
+		//	ai_status = EVADE_BORDER;
+		//	ai_decide = true;
+		//}
+
 		// 2. Defense/Offense others
 		if (!ai_decide)
 		{
@@ -185,7 +220,7 @@ void Worm::update(float time_tick, unordered_map<uint, Prey> preys)
 			for (unordered_map<uint, Prey>::iterator iter = preys.begin(); iter != preys.end(); ++iter)
 			{
 				float dist = distance(iter->second.pos, head.pos);
-				if (dist < 10 * head.radius)
+				if (dist < SEEK_PREY_RANGE)
 				{
 					if (dist < min_dist)
 					{
@@ -226,20 +261,27 @@ void Worm::update(float time_tick, unordered_map<uint, Prey> preys)
 
 	if (head.pos.length() > WORLD_BORDER_RADIUS - head.radius)
 	{
-		gevent.add(format_string("[%d] out of range", object_id));
+		if (player->possess_worm != object_id)
+		{
+			gevent.add(format_string("[%d] out of range", object_id));
+		}
 	}
 
+	revalidate_body_radius();
+
+	if (boosting && growth <= 0)
+	{
+		disable_boost();
+	}
+}
+void Worm::revalidate_body_radius()
+{
 	// resizing
 	float new_size = (logf(growth + 600) + 1) / 2 - logf(sqrtf(600));
 	head.set_size(new_size);
 	for (vector<WormBody>::iterator iter = body.begin(); iter != body.end(); ++iter)
 	{
 		iter->set_size(new_size);
-	}
-
-	if (boosting && growth <= 0)
-	{
-		disable_boost();
 	}
 }
 void Worm::make_player()
@@ -295,6 +337,7 @@ void Worm::boost_poof()
 }
 void Worm::poof()
 {
+	cout << "poof" << endl;
 	growth -= POOF_STACK_MAX_GAGE;
 	if (growth < 0)
 	{
@@ -342,7 +385,11 @@ void Worm::disable_boost()
 {
 	boosting = false;
 }
+float Worm::get_body_gap()
+{
+	return head.radius * 0.8f;
+}
 float Worm::get_stretched_length()
 {
-	return head.radius * 2 + body.size() * INITIAL_BODY_GAP;
+	return head.radius * 2 + body.size() * get_body_gap();
 }

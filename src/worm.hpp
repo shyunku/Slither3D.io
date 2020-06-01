@@ -21,7 +21,8 @@ public:
 	worm_body_(vec3 initial_pos, vec3 direction);
 	mat4 get_model_matrix();
 	void move(float move_dist);
-	void track_parent(vec3 parent_pos);
+	void track_parent(vec3 parent_pos, float body_gap);
+	void track_parent(vec3 parent_pos, float body_gap, float rate);
 	void set_size(float size);
 }WormBody;
 
@@ -30,7 +31,7 @@ typedef class worm_
 private:
 	const float			INITIAL_BODY_GAP = 0.6f;
 	const float			BODY_GROWTH = 8.f;
-	const float			MIN_BODY_LENGTH = 10;
+	const float			MIN_BODY_LENGTH = 10;				// must be larger than 2
 	const float			MIN_DIRECTION_CHANGE = PI / 4;
 	const float			MAX_DIRECTION_CHANGE = PI / 2;
 	const float			AVOID_WALL_START_RANGE = WORLD_BORDER_RADIUS * 2 / 3;
@@ -59,6 +60,7 @@ public:
 
 	// STANDARD
 	float				auto_direction_change_period = 0;
+	float				force_direction_change_period = 1.0;
 	float				elapsed_evade_wall_timestamp = 0;
 	float				elapsed_standard_timestamp = 0;
 
@@ -81,4 +83,6 @@ public:
 	void disable_boost();
 	bool is_meetable(worm_ other);
 	float get_stretched_length();
+	float get_body_gap();
+	void revalidate_body_radius();
 }Worm;

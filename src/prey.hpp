@@ -8,7 +8,7 @@ extern const float WORLD_BORDER_RADIUS;
 typedef class prey_
 {
 private:
-	const float BORDER_PADDING_ARRANGE_OFFSET = 0.01f * WORLD_BORDER_RADIUS;
+	const float BORDER_PADDING_ARRANGE_OFFSET = 0.1f * WORLD_BORDER_RADIUS;
 	const float MAX_RADIUS = 0.3f;
 	const float MIN_RADIUS = 0.1f;
 	const float MAX_AMOUNT = 4.f;

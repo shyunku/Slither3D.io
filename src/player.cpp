@@ -7,7 +7,8 @@ Player::player_(Worm* me)
 }
 void Player::update(float time_tick)
 {
-	camera.update(me->head.pos - camera.look_direction * (LOOK_DISTANCE + me->get_camera_distance()));
+	camera.update(me->head.pos - camera.look_direction * zoom_factor * (LOOK_DISTANCE + me->get_camera_distance()));
+	score += SCORE_TIME_TICK_FACTOR * time_tick;
 }
 inline vec3 Player::get_pos()
 {
@@ -26,4 +27,16 @@ void Player::set_player(Worm* worm, uint index)
 void Player::intent_other(Worm* worm)
 {
 	me = worm;
+}
+void Player::control_factor(double offset)
+{
+	zoom_factor += float(offset) * 0.1f;
+	if (zoom_factor < MIN_ZOOM_FACTOR)
+	{
+		zoom_factor = MIN_ZOOM_FACTOR;
+	}
+	else if (zoom_factor > MAX_ZOOM_FACTOR) 
+	{
+		zoom_factor = MAX_ZOOM_FACTOR;
+	}
 }

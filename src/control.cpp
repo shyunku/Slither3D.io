@@ -9,6 +9,11 @@
 extern CommandConsole console;
 extern Player* player;
 
+void mouse_wheel_event_listener(GLFWwindow* window, double xoffset, double yoffset)
+{
+	player->control_factor(yoffset);
+}
+
 void mouse_click_event_listener(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT)

@@ -100,9 +100,6 @@ void text_initial_setting()
 	create_font_texture();
 	free(font_buffer);
 
-	string text_frag_fullpath = string(root_path_str) + string(text_frag_path);
-	string text_vert_fullpath = string(root_path_str) + string(text_vert_path);
-
 	text_program = create_shader_program("text");
 
 
@@ -204,4 +201,9 @@ float get_string_width(string str, float scale)
 	}
 
 	return width;
+}
+
+void draw_centered_string(string text, GLint _x, GLint _y, GLfloat scale, vec4 color)
+{
+	draw_string(text, _x - int(get_string_width(text, scale)/2), _y, scale, color);
 }

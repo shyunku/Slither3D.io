@@ -9,11 +9,9 @@
 const char*				root_path_str = "../bin/";
 
 const char*				font_path = "../bin/resources/fonts/consola.ttf";
-const char*				text_frag_path = "shaders/text/text.frag";
-const char*				text_vert_path = "shaders/text/text.vert";
 
 string					app_name = "Slither3D.io";
-string					version_str = "0.5.0v - Beta";
+string					version_str = "0.5.1v - Beta";
 
 const uint				FPS_LIMIT = 144;
 
@@ -80,13 +78,7 @@ void update()
 
 	// Update Objects
 	player->update(time_tick);
-	//if (keypress_tracker.KEY_W)
-	//{
-
-	//}
 	game_moderator.update(time_tick);
-
-	//Sleep((int)(1000.f / FPS_LIMIT));
 }
 
 void render()
@@ -96,12 +88,15 @@ void render()
 
 	float fFPS = 1.f / time_tick;
 
+	// Score, Growth
+	draw_centered_string(to_string(int(player->score)), window_size.x / 2, window_size.y / 9, window_size.y / 700.f, vec4(1,1,1,0.4f));
+
 	// App Information Draw
 	ail.draw(app_name + " " + version_str);
 
 	// Static Value Drawer
 	svl.draw("FrameCount: " + to_string(frame_count));
-	svl.draw(format_string("Elapsed time: %.2fs", elapsed_time));
+	svl.draw(format_string("Elapsed time: %.2fs ", elapsed_time) + get_current_time_string());
 	svl.draw(format_string("Update time tick: %.4fs", time_tick));
 	svl.draw(format_string("FPS: %d", int(fFPS)));
 	svl.blank(1);
@@ -150,7 +145,7 @@ void initialize_environment()
 	// GL State Setting
 	set_gl_background_color(background_color);
 	glEnable(GL_BLEND);
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -162,6 +157,7 @@ void initialize_environment()
 	glfwSetKeyCallback(window, keyboard_event_listener);
 	glfwSetCursorPosCallback(window, mouse_motion_event_listener);
 	glfwSetCharCallback(window, key_type_event_listener);
+	glfwSetScrollCallback(window, mouse_wheel_event_listener);
 
 	/* ------------------ User Method starts ------------------ */
 	// Text Setting

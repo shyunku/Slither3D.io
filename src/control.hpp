@@ -11,6 +11,7 @@ typedef struct track_keypress
 	bool KEY_D;
 }KeypressTracker;
 
+void mouse_wheel_event_listener(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_click_event_listener(GLFWwindow* window, int button, int action, int mods);
 void mouse_motion_event_listener(GLFWwindow* window, double x, double y);
 void key_type_event_listener(GLFWwindow* window, GLuint codepoint);

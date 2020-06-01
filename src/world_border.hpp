@@ -28,7 +28,7 @@ public:
 		glUniformMatrix4fv(uloc, 1, GL_TRUE, get_model_matrix());
 
 		uloc = get_validated_uniform_location(shader_program, "solid_color");
-		glUniform4fv(uloc, 1, vec4(0.6f, 0.6f, 0.6f, 0.25f));
+		glUniform4fv(uloc, 1, vec4(0.5f, 0.5f, 0.5f, 0.2f));
 
 		glDrawElements(GL_TRIANGLES, sphere_triangles, GL_UNSIGNED_INT, nullptr);
 	}

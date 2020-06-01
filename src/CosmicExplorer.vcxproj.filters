@@ -172,21 +172,27 @@
     <None Include="..\bin\shaders\wormbody\wormbody.vert">
       <Filter>Shader Files\wormbody</Filter>
     </None>
-    <None Include="..\bin\shaders\glow\prey.frag">
-      <Filter>Shader Files\prey</Filter>
-    </None>
-    <None Include="..\bin\shaders\glow\prey.vert">
-      <Filter>Shader Files\prey</Filter>
-    </None>
     <None Include="..\bin\shaders\worldborder\worldborder.frag">
       <Filter>Shader Files\worldborder</Filter>
     </None>
     <None Include="..\bin\shaders\worldborder\worldborder.vert">
       <Filter>Shader Files\worldborder</Filter>
     </None>
+    <None Include="..\bin\shaders\prey\prey.frag">
+      <Filter>Shader Files\prey</Filter>
+    </None>
+    <None Include="..\bin\shaders\prey\prey.vert">
+      <Filter>Shader Files\prey</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\consola.ttf">
+      <Filter>Resource Files\fonts</Filter>
+    </Font>
+    <Font Include="..\bin\resources\fonts\notosans.ttf">
+      <Filter>Resource Files\fonts</Filter>
+    </Font>
+    <Font Include="..\bin\resources\fonts\titillium.ttf">
       <Filter>Resource Files\fonts</Filter>
     </Font>
   </ItemGroup>

@@ -11,8 +11,8 @@ using ovprop = ObjectVertexProperty;
 typedef unordered_map<uint, Worm> worm_map;
 typedef unordered_map<uint, Prey> prey_map;
 
-const uint initial_worm_num = 1000;
-const uint initial_prey_num = 3000;
+const uint initial_worm_num = 1;		// 100
+const uint initial_prey_num = 3000;		// 100000
 
 InGameObjectManager::in_game_object_manager_() {}
 InGameObjectManager::in_game_object_manager_(
@@ -26,6 +26,7 @@ InGameObjectManager::in_game_object_manager_(
 	tiny_sphere_vertex_property(tiny_sphere_vertex_property),
 	circle_vertex_property(circle_vertex_property)
 {
+	srand((unsigned)time(NULL));
 	// Create Worms
 	for (uint i = 0; i < initial_worm_num - 1; i++)
 	{
@@ -47,8 +48,6 @@ void InGameObjectManager::render_all()
 	extern GLuint wormbody_program;
 	extern GLuint prey_program;
 
-	
-
 	// render world border
 	set_main_shader(worldborder_program);
 	glBindVertexArray(large_sphere_vertex_property.vertex_array_ID);
@@ -62,6 +61,8 @@ void InGameObjectManager::render_all()
 	glBindVertexArray(small_sphere_vertex_property.vertex_array_ID);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	
 	for (unordered_map<uint, Worm>::iterator iter = worms.begin(); iter != worms.end(); ++iter)
 	{
@@ -91,7 +92,6 @@ void InGameObjectManager::update_all(float time_tick)
 	detect_collision_worm_prey();
 }
 void InGameObjectManager::detect_collision_worms() {
-
 	// iter1 == target worm - body
 	for (worm_map::iterator iter1 = worms.begin(); iter1 != worms.end(); ++iter1)
 	{
@@ -99,12 +99,16 @@ void InGameObjectManager::detect_collision_worms() {
 		for (worm_map::iterator iter2 = worms.begin(); iter2 != worms.end();)
 		{
 			// Is in collide range?
-			
-			if (iter1->first != iter2->first)
+			if (iter1->second.is_meetable(iter2->second) && iter1->first != iter2->first)
 			{
 				bool is_dead = iter2->second.detect_death(iter1->second);
 				if (is_dead)
 				{
+					if (iter1->first == player->possess_worm)
+					{
+						player->score += player->SCORE_KILL_ENEMY;
+					}
+
 					gevent.add(format_string("Worm[id=%d] dead by worm[id=%d]", iter2->first, iter1->first));
 					iter2 = worms.erase(iter2);
 					continue;
@@ -138,6 +142,12 @@ void InGameObjectManager::detect_collision_worm_prey() {
 			if (iter1->second.detect_eat_prey(iter2->second))
 			{
 				iter1->second.growth += iter2->second.amount;
+				// Player score
+				if (iter1->first == player->possess_worm)
+				{
+					player->score += player->SCORE_EAT_PREY_FACTOR * iter2->second.amount;
+				}
+
 				iter2 = preys.erase(iter2);
 				break;
 			}

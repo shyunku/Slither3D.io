@@ -64,7 +64,7 @@ ObjectVertexProperty create_circle_vertex_property()
 ObjectVertexProperty create_large_sphere_vertex_property()
 {
 	vertex upper_pole = { vec3(0,1.f,0), vec3(0,1.f,0), vec2(0, 1.f) };
-	vertex lower_pole = { vec3(0,-1.f,0), vec3(0,-1.f,0), vec2(0, -1.f) };
+	vertex lower_pole = { vec3(0,-1.f,0), vec3(0,-1.f,0), vec2(0, 0.f) };
 	vector<vertex> vertices;
 
 	// exclude pole division
@@ -84,7 +84,7 @@ ObjectVertexProperty create_large_sphere_vertex_property()
 			float z = -cl * so;
 
 			float rate_hor = (float)j / (float)(large_sphere_longitude_segment_num - 1);
-			float rate_ver = 1 - (float)i / (float)(large_sphere_latitude_segment_num - 1);
+			float rate_ver = 1 - (float)(i-1) / (float)(large_sphere_latitude_segment_num - 1);
 			vec2 texcoord(rate_hor, rate_ver);
 
 			vertices.push_back({ vec3(x,y,z), vec3(x, y, z), texcoord });

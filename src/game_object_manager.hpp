@@ -30,7 +30,7 @@ public:
 	unordered_map<uint, Prey> preys;
 	WorldBorder world_border = WorldBorder();
 
-	bool worm_collide_switch = false;
+	bool worm_collide_switch = true;
 	bool simulate_worms = true;
 
 	in_game_object_manager_();

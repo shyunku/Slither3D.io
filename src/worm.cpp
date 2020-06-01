@@ -70,6 +70,9 @@ void Worm::render_body(GLuint shader_program, uint sphere_triangles)
 		uloc = get_validated_uniform_location(shader_program, "solid_color");
 		glUniform4fv(uloc, 1, color);
 
+		//uloc = get_validated_uniform_location(shader_program, "shadow_direction");
+		//glUniform3fv(uloc, 1, body.at(i).direction);
+
 		glDrawElements(GL_TRIANGLES, sphere_triangles, GL_UNSIGNED_INT, nullptr);
 	}
 }
@@ -118,6 +121,7 @@ Worm::worm_(float initial_growth, uint id)
 	float head_pos_rad = randf(0, CREATE_WORM_BORDER_RADIUS_FACTOR * WORLD_BORDER_RADIUS);
 	//float head_pos_rad = 0;
 	head = WormBody(head_pos_rad * get_random_vector(), initd);
+	
 	color = vec4(randf(0.5f, 1), randf(0.5f, 1), randf(0.5f, 1), 1);
 
 	growth = initial_growth;
@@ -156,7 +160,7 @@ void Worm::update(float time_tick)
 					float restrict_angle = (1.f - refinef(pos_rate)) * PI;
 					decided_direction = get_restricted_vector(-head.pos.normalize(), restrict_angle);
 
-					gevent.add(format_string("[%d] Pos_rate: %7.3f %7.3f", object_id, pos_rate, restrict_angle*180/PI));
+					//gevent.add(format_string("[%d] Pos_rate: %7.3f %7.3f", object_id, pos_rate, restrict_angle*180/PI));
 
 					auto_direction_change_period = 1.f;
 				}
@@ -257,6 +261,12 @@ void Worm::boost_poof()
 	if (boosting && growth > 0)
 	{
 		growth -= 0.2f;
+		if (growth < 0)
+		{
+			growth = 0;
+			return;
+		}
+
 		WormBody tail = body.back();
 		int ran = (int)rand();
 		if (ran % 5 == 1) 
@@ -275,7 +285,7 @@ bool Worm::detect_death(worm_ other)
 	{
 		for (vector<WormBody>::iterator iter = other.body.begin(); iter != other.body.end(); ++iter)
 		{
-			if (distance(head.pos, iter->pos) <= (iter->radius + iter->radius))
+			if (distance(head.pos, iter->pos) <= (head.radius + iter->radius))
 			{
 				return true;
 			}

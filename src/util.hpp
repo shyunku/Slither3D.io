@@ -22,3 +22,4 @@ string get_vec3_string(vec3 v);
 string get_vec3_pair_string(vec3 v);
 void print_version_of_app();
 vec3 get_restricted_vector(vec3 original, float max_difference);
+vec4 get_brighter_color(vec4 color, float f);

@@ -10,11 +10,14 @@ extern GameEventLogger gevent;
 extern CommandConsole console;
 extern GameModerator game_moderator;
 
-const string AI_STATUS_CODE[6] = { "EVADE_BORDER", "DEFENSE", "OFFENSE", "SEEK_PREY", "STANDARD", "NONE_AI" };
+const string AI_STATUS_CODE[7] = { "EVADE_BORDER", "DEFENSE", "OFFENSE", "SEEK_PREY", "SEEK_PREY_BOOST", "STANDARD", "NONE_AI" };
 const double TICK_MOMENTUM_FACTOR = 7.2f;
 const float CREATE_WORM_BORDER_RADIUS_FACTOR = 0.85f;
-const float POOF_STACK_MAX_GAGE = 2.0f;
-const float SEEK_PREY_RANGE = 8.0f;
+const float POOF_STACK_MAX_GAGE = 3.0f;
+const float SEEK_PREY_RANGE = 8.0f; //8.0
+const float	PREY_CREATE_DELAY = 10.f;
+
+const float BOOST_BRIGHTER_FACTOR = 0.3f;
 
 /* -------------------------------------------------------- Worm Body -------------------------------------------------------- */
 
@@ -45,6 +48,7 @@ void WormBody::track_parent(vec3 parent_pos, float body_gap)
 void WormBody::track_parent(vec3 parent_pos, float body_gap, float rate)
 {
 	direction = (parent_pos - pos).normalize();
+	
 	pos = parent_pos - direction * body_gap * rate;
 }
 void WormBody::set_size(float size)
@@ -62,7 +66,7 @@ void Worm::render_head(GLuint shader_program, uint sphere_triangles)
 	glUniformMatrix4fv(uloc, 1, GL_TRUE, head.get_model_matrix());
 
 	uloc = get_validated_uniform_location(shader_program, "solid_color");
-	glUniform4fv(uloc, 1, color);
+	glUniform4fv(uloc, 1, get_brighter_color(get_current_color(), 0.3f));
 
 	glDrawElements(GL_TRIANGLES, sphere_triangles, GL_UNSIGNED_INT, nullptr);
 }
@@ -76,7 +80,7 @@ void Worm::render_body(GLuint shader_program, uint sphere_triangles)
 		glUniformMatrix4fv(uloc, 1, GL_TRUE, body.at(i).get_model_matrix());
 
 		uloc = get_validated_uniform_location(shader_program, "solid_color");
-		glUniform4fv(uloc, 1, color);
+		glUniform4fv(uloc, 1, get_current_color());
 
 		//uloc = get_validated_uniform_location(shader_program, "shadow_direction");
 		//glUniform3fv(uloc, 1, body.at(i).direction);
@@ -88,35 +92,41 @@ void Worm::update_body(float time_tick)
 {
 	boost_poof();
 	uint body_num = (uint)(MIN_BODY_LENGTH + growth / BODY_GROWTH);
-	float last_body_growth_rate = float(int(growth) % int(BODY_GROWTH)) / BODY_GROWTH;
-	body_num += last_body_growth_rate > 0;
+	float last_body_growth_rate = float(growth - (body_num - MIN_BODY_LENGTH) * BODY_GROWTH) / BODY_GROWTH;
 	uint cur_size = body.size();
+	body_num += last_body_growth_rate > 0;
 
 	if (body_num < cur_size)
 	{
+		// body size down
 		body.resize(body_num);
 	}
 	else if (body_num > cur_size)
 	{
-		WormBody last_body = cur_size == 0 ? head : body.at(cur_size - 1);
+		// body expands
 		uint count = 0;
+		WormBody last_body = body.empty() ? head : body.back();
 		while (body_num != body.size())
 		{
-			body.push_back(WormBody(last_body.pos - INITIAL_BODY_GAP * last_body.direction * (float)++count, last_body.direction));
+			body.push_back(WormBody(last_body.pos - get_body_gap() * last_body.direction * float(++count), last_body.direction));
 		}
 	}
 
 	// revalidate children pos
 	head.move(time_tick * speed * (boosting ? BOOST_SPEED_FACTOR : 1));
-	for (vector<WormBody>::iterator iter = body.begin(); iter < body.end() - 1; ++iter)
+	//cout << "vector check" << endl;
+	for (vector<WormBody>::iterator iter = body.begin(); iter != body.end(); ++iter)
 	{
-		WormBody parent = iter == body.begin() ? head : *(iter - 1);
-		iter->track_parent(parent.pos, get_body_gap());
+		WormBody parent = ((iter == body.begin()) ? head : *(iter - 1));
+		if (last_body_growth_rate > 0 && iter == std::prev(body.end(),1))
+		{
+			iter->track_parent(parent.pos, get_body_gap(), last_body_growth_rate);
+		}
+		else
+		{
+			iter->track_parent(parent.pos, get_body_gap());
+		}
 	}
-
-	// tail
-	// assert there are at least 2 parents with MIN_BODY_LENGTH
-	(body.end() - 1)->track_parent((body.end() - 2)->pos, get_body_gap(), last_body_growth_rate);
 }
 
 Worm::worm_() {}
@@ -129,8 +139,7 @@ Worm::worm_(float initial_growth, uint id)
 	this->object_id = id;
 
 	head.direction = initd;
-	float head_pos_rad = randf(0, CREATE_WORM_BORDER_RADIUS_FACTOR * WORLD_BORDER_RADIUS);
-	//float head_pos_rad = 0;
+	float head_pos_rad = cbrt(randf(0, 1)) * CREATE_WORM_BORDER_RADIUS_FACTOR * WORLD_BORDER_RADIUS;
 	head = WormBody(head_pos_rad * get_random_vector(), initd);
 	
 	color = vec4(randf(0.5f, 1), randf(0.5f, 1), randf(0.5f, 1), 1);
@@ -177,33 +186,6 @@ void Worm::update(float time_tick, unordered_map<uint, Prey> preys)
 			ai_status = EVADE_BORDER;
 			ai_decide = true;
 		}
-			
-
-		//if (ai_status != EVADE_BORDER)
-		//{
-		//	auto_direction_change_period = 0;
-		//}
-
-		//if (head.pos.length() > AVOID_WALL_START_RANGE)
-		//{
-		//	elapsed_evade_wall_timestamp += time_tick;
-		//	if (elapsed_evade_wall_timestamp > auto_direction_change_period)
-		//	{
-		//		float pos_rate = (head.pos.length() - AVOID_WALL_START_RANGE) / (WORLD_BORDER_RADIUS - AVOID_WALL_START_RANGE);
-		//		// More further from origin (more close to border), Probability to avoid wall increases
-		//		// and more break angle to origin
-
-		//		elapsed_evade_wall_timestamp = 0;
-		//		float restrict_angle = (1.f - refinef(pos_rate)) * PI;
-		//		decided_direction = get_restricted_vector(-head.pos.normalize(), restrict_angle);
-
-		//		//gevent.add(format_string("[%d] Pos_rate: %7.3f %7.3f", object_id, pos_rate, restrict_angle*180/PI));
-
-		//		auto_direction_change_period = 1.f;
-		//	}
-		//	ai_status = EVADE_BORDER;
-		//	ai_decide = true;
-		//}
 
 		// 2. Defense/Offense others
 		if (!ai_decide)
@@ -217,6 +199,7 @@ void Worm::update(float time_tick, unordered_map<uint, Prey> preys)
 			float min_dist = 1000000.f;
 			bool found_prey = false;
 			vec3 closest_pos;
+
 			for (unordered_map<uint, Prey>::iterator iter = preys.begin(); iter != preys.end(); ++iter)
 			{
 				float dist = distance(iter->second.pos, head.pos);
@@ -238,6 +221,7 @@ void Worm::update(float time_tick, unordered_map<uint, Prey> preys)
 				ai_decide = true;
 			}
 		}
+
 		// Last. Standard movement
 		if (!ai_decide)
 		{
@@ -258,14 +242,6 @@ void Worm::update(float time_tick, unordered_map<uint, Prey> preys)
 	head.direction += (decided_direction - head.direction) * TICK_MOMENTUM_FACTOR * time_tick;
 	head.direction = head.direction.normalize();
 	update_body(time_tick);
-
-	if (head.pos.length() > WORLD_BORDER_RADIUS - head.radius)
-	{
-		if (player->possess_worm != object_id)
-		{
-			gevent.add(format_string("[%d] out of range", object_id));
-		}
-	}
 
 	revalidate_body_radius();
 
@@ -337,7 +313,6 @@ void Worm::boost_poof()
 }
 void Worm::poof()
 {
-	cout << "poof" << endl;
 	growth -= POOF_STACK_MAX_GAGE;
 	if (growth < 0)
 	{
@@ -345,7 +320,7 @@ void Worm::poof()
 		return;
 	}
 	WormBody tail = body.back();
-	game_moderator.ingame_object_manager.push_new_prey_pos(tail.pos);
+	game_moderator.ingame_object_manager.push_delay_create_prey(tail.pos, POOF_STACK_MAX_GAGE, float(glfwGetTime()) + PREY_CREATE_DELAY);
 }
 bool Worm::is_meetable(worm_ other)
 {
@@ -392,4 +367,28 @@ float Worm::get_body_gap()
 float Worm::get_stretched_length()
 {
 	return head.radius * 2 + body.size() * get_body_gap();
+}
+void Worm::spread_prey_before_die()
+{
+	float avg = (growth / body.size()) + 1.f;
+	for (vector<WormBody>::iterator iter = body.begin(); iter != body.end(); ++iter)
+	{
+		uint prey_num_per_body = rand() % 5 + 1;
+		float avg_avg = avg / prey_num_per_body;
+		for (uint i = 0; i < prey_num_per_body; i++)
+		{
+			float virtual_rad = cbrt(randf(0, 1)) * iter->radius;
+			vec3 rand_vec = get_random_vector();
+			float amount = (1 + 0.3f * randf(0, 1)) * avg_avg;
+			game_moderator.ingame_object_manager.push_new_prey_pos(iter->pos + rand_vec * virtual_rad, amount);
+		}
+	}
+}
+vec4 Worm::get_current_color()
+{
+	return boosting ? get_brighter_color(color, BOOST_BRIGHTER_FACTOR) : color;
+}
+bool Worm::out_of_range()
+{
+	return head.pos.length() > (WORLD_BORDER_RADIUS - head.radius);
 }

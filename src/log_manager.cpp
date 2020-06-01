@@ -272,6 +272,19 @@ void CommandConsole::execute_command()
 			return;
 		}
 	}
+	else if (!keyword.compare("start"))
+	{
+		if (words != 0)
+		{
+			add("Invalid Parameter. usage: /start", _WARNING_);
+			return;
+		}
+
+		//start
+		player->spectator = false;
+		game_moderator.ingame_object_manager.worm_collide_switch = true;
+		game_moderator.ingame_object_manager.push_player_worm_pair();
+	}
 
 	add("No command keyword for '" + keyword + "'", _WARNING_);
 	add("Try /help or /h to see how to use.", _HIGHLIGHTED_);

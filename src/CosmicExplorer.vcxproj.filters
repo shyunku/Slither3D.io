@@ -184,6 +184,9 @@
     <None Include="..\bin\shaders\prey\prey.vert">
       <Filter>Shader Files\prey</Filter>
     </None>
+    <None Include="..\README.md">
+      <Filter>Communication</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\consola.ttf">

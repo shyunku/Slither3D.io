@@ -7,8 +7,8 @@ Player::player_(Worm* me)
 }
 void Player::update(float time_tick)
 {
+	if (!set)return;
 	camera.update(me->head.pos - camera.look_direction * zoom_factor * (LOOK_DISTANCE + me->get_camera_distance()));
-	score += SCORE_TIME_TICK_FACTOR * time_tick;
 }
 inline vec3 Player::get_pos()
 {
@@ -16,6 +16,7 @@ inline vec3 Player::get_pos()
 }
 void Player::set_move_direction()
 {
+	if (!set)return;
 	if (me->get_id() != possess_worm)return;
 	me->decided_direction = camera.look_direction.normalize();
 }

@@ -6,13 +6,20 @@
 #include "prey.hpp"
 #include "world_border.hpp"
 #include "player.hpp"
+#include <xutility>
 
 using ovprop = ObjectVertexProperty;
 typedef unordered_map<uint, Worm> worm_map;
 typedef unordered_map<uint, Prey> prey_map;
 
-const uint initial_worm_num = 1;			// 100
-const uint initial_prey_num = 10000;		// 100000
+const uint initial_worm_num = 20;			// 100
+const uint initial_prey_num = 7500;			// 10000
+
+const uint prey_create_num_lower_limit = 1000;
+
+// auto prey create
+const float PREY_AUTO_CREATE_PERIOD = 5.f;
+float prey_auto_create_elapsed = 0.f;
 
 const uint SCOREBOARD_NUM = 6;
 
@@ -30,12 +37,10 @@ InGameObjectManager::in_game_object_manager_(
 {
 	srand((unsigned)time(NULL));
 	// Create Worms
-	for (uint i = 0; i < initial_worm_num - 1; i++)
+	for (uint i = 0; i < initial_worm_num; i++)
 	{
 		push_new_worm_pair();
 	}
-	push_player_worm_pair();
-
 	
 	// Create Preys
 	for (uint i = 0; i < initial_prey_num; i++)
@@ -89,9 +94,93 @@ void InGameObjectManager::update_all(float time_tick)
 			iter->second.update(time_tick, preys);
 		}
 	}
-	magnet_prey();
+	magnet_prey(time_tick);
 	if(worm_collide_switch) detect_collision_worms();
 	detect_collision_worm_prey();
+	remove_out_of_range();
+	auto_create_prey_system(time_tick);
+	delay_create_preys();
+
+	// Select Spectator
+	if (player->spectator)
+	{
+		Worm* worm = &(worms.begin())->second;
+		if (worm != NULL)
+		{
+			player->intent_other(worm);
+			player->set = true;
+		}
+	}
+}
+
+void InGameObjectManager::push_delay_create_prey(vec3 pos, float amount, float time)
+{
+	delayed_create_prey_list.insert(unordered_map<float, pair<vec3, float>>::value_type(time, make_pair(pos, amount)));
+}
+
+void InGameObjectManager::delay_create_preys()
+{
+	for (unordered_map<float, pair<vec3, float>>::iterator iter = delayed_create_prey_list.begin(); iter != delayed_create_prey_list.end();)
+	{
+		if (iter->first <= float(glfwGetTime()))
+		{
+			pair<vec3, float> p = iter->second;
+			push_new_prey_pos(p.first, p.second);
+			iter = delayed_create_prey_list.erase(iter);
+		}
+		else
+		{
+			++iter;
+		}
+	}
+}
+
+void InGameObjectManager::auto_create_prey_system(float time_tick)
+{
+	prey_auto_create_elapsed += time_tick;
+	if (prey_auto_create_elapsed > PREY_AUTO_CREATE_PERIOD)
+	{
+		prey_auto_create_elapsed = 0;
+
+		if (preys.size() < initial_prey_num - prey_create_num_lower_limit)
+		{
+			for (uint i = 0; i < prey_create_num_lower_limit; i++)
+			{
+				push_new_prey_rand_pos();
+			}
+		}
+	}
+}
+
+void InGameObjectManager::remove_out_of_range()
+{
+	for (worm_map::iterator iter1 = worms.begin(); iter1 != worms.end();)
+	{
+		if (iter1->second.out_of_range())
+		{
+			gevent.add(format_string("Worm[id=%d] is destroyed by gamma ray, out of the border.", iter1->first));
+			if (iter1->first == player->possess_worm)
+			{
+				player_gameover();
+			}
+			else
+			{
+				push_new_worm_pair();
+			}
+			iter1 = worms.erase(iter1);
+		}
+		else
+		{
+			++iter1;
+		}
+	}
+}
+
+void InGameObjectManager::player_gameover()
+{
+	player->spectator = true;
+	worm_collide_switch = false;
+	player->score = 0;
 }
 
 void InGameObjectManager::detect_collision_worms() {
@@ -112,7 +201,16 @@ void InGameObjectManager::detect_collision_worms() {
 						player->score += player->SCORE_KILL_ENEMY;
 					}
 
-					gevent.add(format_string("Worm[id=%d] dead by worm[id=%d]", iter2->first, iter1->first));
+					if (iter1->first == player->possess_worm)
+					{
+						player_gameover();
+					}
+					else
+					{
+						push_new_worm_pair();
+					}
+					iter2->second.spread_prey_before_die();
+					gevent.add(format_string("Worm[id=%d] is dead by worm[id=%d]", iter2->first, iter1->first));
 					iter2 = worms.erase(iter2);
 					continue;
 				}
@@ -121,16 +219,16 @@ void InGameObjectManager::detect_collision_worms() {
 		}
 	}
 }
-void InGameObjectManager::magnet_prey() {
+void InGameObjectManager::magnet_prey(float time_tick) {
 	for (unordered_map<uint, Worm>::iterator iter1 = worms.begin(); iter1 != worms.end(); ++iter1)
 	{
 		// iter2 == prey
 		for (prey_map::iterator iter2 = preys.begin(); iter2 != preys.end(); ++iter2)
 		{
-			if (distance(iter1->second.head.pos, iter2->second.pos) <= iter1->second.head.radius + iter2->second.radius + iter1->second.head.radius)
+			if (distance(iter1->second.head.pos, iter2->second.pos) <= iter1->second.head.radius + iter2->second.radius + iter1->second.head.radius * 3.f)
 			{
 				vec3 diff_vec = iter2->second.pos - iter1->second.head.pos;
-				iter2->second.pos -= diff_vec * 0.1f;
+				iter2->second.pos -= diff_vec * (5.f * time_tick);
 			}
 		}
 	}
@@ -170,14 +268,14 @@ int InGameObjectManager::push_new_worm_pair()
 }
 void InGameObjectManager::push_new_prey_rand_pos()
 {
-	Prey prey = Prey();//debug
+	Prey prey = Prey();
 	preys.insert(prey_map::value_type(prey_id, prey));
 
 	prey_id++;
 }
-void InGameObjectManager::push_new_prey_pos(vec3 pos)
+void InGameObjectManager::push_new_prey_pos(vec3 pos, float amount)
 {
-	Prey prey = Prey(pos);
+	Prey prey = Prey(pos, amount);
 	preys.insert(prey_map::value_type(prey_id, prey));
 
 	prey_id++;

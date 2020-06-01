@@ -11,7 +11,7 @@ const char*				root_path_str = "../bin/";
 const char*				font_path = "../bin/resources/fonts/consola.ttf";
 
 string					app_name = "Slither3D.io";
-string					version_str = "0.5.3v - Beta";
+string					version_str = "1.0.0v - Beta";
 
 const uint				FPS_LIMIT = 144;
 
@@ -31,7 +31,7 @@ const vec4 console_error = vec4(1.f, .5f, .5f, 1.f);
 const vec4 console_highlighted = vec4(.6f, 1.f, 1.f, 1.f);
 
 /* --------------------------- Constant Ingame  --------------------------- */
-const float						WORLD_BORDER_RADIUS = 100.f; //1000.f
+const float						WORLD_BORDER_RADIUS = 150.f; //200.f
 
 /* --------------------------- Global Objects  --------------------------- */
 GLFWwindow*						window = nullptr;
@@ -89,7 +89,10 @@ void render()
 	float fFPS = 1.f / time_tick;
 
 	// Score, Growth
-	draw_centered_string(to_string(int(player->score)), window_size.x / 2, window_size.y / 9, window_size.y / 700.f, vec4(1,1,1,0.4f));
+	if (!player->spectator)
+	{
+		draw_centered_string(to_string(int(player->score)), window_size.x / 2, window_size.y / 9, window_size.y / 700.f, vec4(1, 1, 1, 0.4f));
+	}
 
 	// Scoreboard
 
@@ -106,13 +109,17 @@ void render()
 	svl.draw("Console Listener: " + format_string(console.listener_switch ? "true" : "false"));
 	svl.draw("Console KeyListener Disabler: " + format_string(console.key_listener_disabler ? "true" : "false"));
 	svl.blank(2);
-	svl.draw(format_string("Player Worm ID: %d", player->possess_worm), vec4(1.f, 0.6f, 0.6f, 1.f));
+	if (!player->spectator)
+	{
+		svl.draw(format_string("Player Worm ID: %d", player->possess_worm), vec4(1.f, 0.6f, 0.6f, 1.f));
+	}
 	svl.draw(format_string("Alive Worms: %d", game_moderator.ingame_object_manager.worms.size()));
 	svl.draw(format_string("Alive Preys: %d", game_moderator.ingame_object_manager.preys.size()));
 	svl.blank(1);
 	svl.draw(format_string("Intented Worm ID: %d", player->me->get_id()));
 	svl.draw(format_string("AI status: %s", player->me->get_ai_status().c_str()));
 	svl.draw(format_string("Growth: %d", int(player->me->growth)));
+	svl.draw(format_string("Bodies: %d", int(player->me->body.size())));
 	svl.draw("Boost: " + format_string(player->me->boosting ? "true" : "false"));
 	svl.blank(1);
 	svl.draw(format_string("Head Pos: " + get_vec3_string(player->me->head.pos)));
@@ -153,6 +160,7 @@ void initialize_environment()
 	glEnable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -182,8 +190,8 @@ void initialize_environment()
 	game_moderator = GameModerator(large_sphere_vertex_property, small_sphere_vertex_property, tiny_sphere_vertex_property, circle_vertex_property);
 
 	// Debug
-	player->me->set_fix(true);
-	player->me->set_pos(vec3(150, 0, 150));
+	//player->me->set_fix(true);
+	//player->me->set_pos(vec3(150, 0, 150));
 
 
 	// Initial User Action

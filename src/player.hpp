@@ -10,15 +10,16 @@ private:
 	const float MAX_ZOOM_FACTOR = 10.f;
 	bool		fixed = true;
 public:
-	const float SCORE_TIME_TICK_FACTOR = 2.5f;
 	const float SCORE_EAT_PREY_FACTOR = 2.f;
 	const float SCORE_KILL_ENEMY = 85.f;
 
 	Worm*		me;
 	Camera		camera;
-	uint		possess_worm = 0U;		// real me worm id
+	uint		possess_worm = 10000000U;		// real me worm id
 	float		zoom_factor = 1.0f;
 	float		score = 0;
+	bool		spectator = true;
+	bool		set = false;
 	player_();
 	player_(Worm* me);
 	void update(float time_tick);

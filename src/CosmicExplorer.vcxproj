@@ -172,6 +172,7 @@
     <None Include="..\bin\shaders\worldborder\worldborder.vert" />
     <None Include="..\bin\shaders\wormbody\wormbody.frag" />
     <None Include="..\bin\shaders\wormbody\wormbody.vert" />
+    <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="..\bin\resources\fonts\notosans.ttf" />

@@ -9,7 +9,7 @@ using namespace std;
 
 extern const float WORLD_BORDER_RADIUS;
 
-typedef enum ai_status_ { EVADE_BORDER, DEFENSE, OFFENSE, SEEK_PREY, STANDARD, NONE_AI }AI_STATUS;
+typedef enum ai_status_ { EVADE_BORDER, DEFENSE, OFFENSE, SEEK_PREY, SEEK_PREY_BOOST, STANDARD, NONE_AI }AI_STATUS;
 
 typedef class worm_body_
 {
@@ -50,18 +50,20 @@ public:
 	vector<WormBody>	body;
 	bool				is_player = false;
 	bool				boosting = false;
-	float				growth;
+	float				growth = 0;
 	vec3				decided_direction = vec3(0);
 
 	// AI area
 	AI_STATUS			ai_status = STANDARD;
 
-	//
+	// Evade wall
+	float				force_direction_change_period = 1.0;
+	float				elapsed_evade_wall_timestamp = 0;
+
+	// Boost + prey
 
 	// STANDARD
 	float				auto_direction_change_period = 0;
-	float				force_direction_change_period = 1.0;
-	float				elapsed_evade_wall_timestamp = 0;
 	float				elapsed_standard_timestamp = 0;
 
 	worm_();
@@ -85,4 +87,7 @@ public:
 	float get_stretched_length();
 	float get_body_gap();
 	void revalidate_body_radius();
+	void spread_prey_before_die();
+	vec4 get_current_color();
+	bool out_of_range();
 }Worm;

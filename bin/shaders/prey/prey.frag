@@ -15,5 +15,7 @@ void main()
 	//vec2 p = gl_FragCoord.xy;
 	//float f = 0.1 / abs(p.x*p.x + p.y*p.y);
 
-	fragColor = solid_color;
+
+
+	fragColor = solid_color * vec4((tc.yyy+vec3(2))/3, 1);
 }

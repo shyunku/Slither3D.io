@@ -24,7 +24,7 @@ public:
 	float amount;
 
 	prey_();
-	prey_(vec3 target_pos);
+	prey_(vec3 target_pos, float amount);
 	void render(GLuint shader_program, uint sphere_triangles);
 	uint get_id();
 }Prey;

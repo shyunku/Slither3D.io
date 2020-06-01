@@ -21,18 +21,18 @@ Prey::prey_()
 
 	pos = virtual_rad * rand_vec;
 	radius = randf(MIN_RADIUS, MAX_RADIUS);
-	amount = MIN_AMOUNT + (MAX_AMOUNT - MIN_AMOUNT) * (radius - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS);
+	amount = MIN_AMOUNT + (radius - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS);
 
 	flickering_period = randf(2.f, 4.f);
 }
-Prey::prey_(vec3 target_pos)
+Prey::prey_(vec3 target_pos, float amount)
 {
 	float virtual_rad = cbrt(randf(0, 1)) * (WORLD_BORDER_RADIUS - BORDER_PADDING_ARRANGE_OFFSET);
 	vec3 rand_vec = get_random_vector();
 
 	pos = target_pos;
 	radius = randf(MIN_RADIUS, MAX_RADIUS);
-	amount = MIN_AMOUNT + (MAX_AMOUNT - MIN_AMOUNT) * (radius - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS);
+	this->amount = amount;
 
 	flickering_period = randf(2.f, 4.f);
 }

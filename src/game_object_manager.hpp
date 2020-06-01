@@ -28,9 +28,10 @@ public:
 	//vector<Star> stars;
 	unordered_map<uint, Worm> worms;
 	unordered_map<uint, Prey> preys;
+	unordered_map<float, pair<vec3, float>> delayed_create_prey_list;	// pos, amount, time
 	WorldBorder world_border = WorldBorder();
 
-	bool worm_collide_switch = true;
+	bool worm_collide_switch = false;
 	bool simulate_worms = true;
 
 	in_game_object_manager_();
@@ -43,11 +44,11 @@ public:
 	void render_all();
 	void update_all(float time_tick);
 	void detect_collision_worms();
-	void magnet_prey();
+	void magnet_prey(float time_tick);
 	void detect_collision_worm_prey();
 	int push_new_worm_pair();
 	void push_new_prey_rand_pos();
-	void push_new_prey_pos(vec3 pos);
+	void push_new_prey_pos(vec3 pos, float amount);
 	pair<uint, uint> push_new_worm_pairs(uint num);
 	void push_player_worm_pair();
 	void remove_worm(uint id);
@@ -55,4 +56,9 @@ public:
 	void remove_worms_except(uint id);
 	void print_alive_worms();
 	Worm* get_worm_with_id(uint id);
+	void remove_out_of_range();
+	void auto_create_prey_system(float time_tick);
+	void delay_create_preys();
+	void push_delay_create_prey(vec3 pos, float amount, float time);
+	void player_gameover();
 }InGameObjectManager;

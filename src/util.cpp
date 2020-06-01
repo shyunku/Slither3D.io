@@ -45,6 +45,13 @@ float refinef(float f)
 	}
 }
 
+vec4 get_brighter_color(vec4 color, float f)
+{
+	f = refinef(f);
+	vec3 rgb = vec3(color.x, color.y, color.z);
+	return vec4(rgb + (vec3(1) - rgb) * f, color.a);
+}
+
 int check_string_bool(string str)
 {
 	if (!str.compare("true")) return 1;
